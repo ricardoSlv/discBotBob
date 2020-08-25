@@ -49,6 +49,8 @@ client.on('message', async (message) => {
                 case 'bruh':
                     playYoutube(voiceChannel, 'https://www.youtube.com/watch?v=2ZIpFytCSVc')
                     break;
+                case 'die': 
+                    playYoutube(voiceChannel, 'https://www.youtube.com/watch?v=PtcHNvVooLQ') 
             }
         } else {
             message.reply('You need to join a voice channel first!');
