@@ -1,0 +1,32 @@
+{
+  "name": "discordbell",
+  "version": "1.0.0",
+  "description": "A discord bot that mimics a church bell",
+  "main": "./src/bot.js",
+  "scripts": {
+    "start": "node ./src/bot.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ricardoSlv/discordBell.git"
+  },
+  "keywords": [
+    "bot",
+    "discord",
+    "bell"
+  ],
+  "author": "ricardoSlv",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ricardoSlv/discordBell/issues"
+  },
+  "homepage": "https://github.com/ricardoSlv/discordBell#readme",
+  "dependencies": {
+    "discord.js": "^12.3.1",
+    "dotenv": "^8.2.0",
+    "ffmpeg-static": "^4.2.7",
+    "opusscript": "0.0.7",
+    "ytdl": "^1.3.5"
+  }
+}
