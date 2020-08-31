@@ -17,9 +17,9 @@ const hourNotice = (channel,voiceChannel) =>
 const halfHourNotice = (channel,voiceChannel) => 
         cron.schedule('30 * * * *', () => {
         const currHour = new Date().getHours()
-        channel.send(`It's ${currHour} o'clock 🕒`)
+        channel.send(`It's half past ${currHour} 🕒`)
         if (voiceChannel) {
-            playBell(voiceChannel, currHour % 12)
+            playBell(voiceChannel, 2)
         }
     })
 
@@ -62,9 +62,12 @@ client.on('message', async (message) => {
 
     console.log(`${message.author.tag} said: ${message.content}`)
 
-    if (message.content === 'BobBot say hi') {
+    if (message.content === 'bob say hi') {
         message.reply('Wtf is up!!')
-        message.channel.send('I sleep now')
+    }
+
+    if (message.content === 'bob say the n word') {
+        message.channel.send('N🧑🏿')
     }
 
     if (message.content === 'bob start the clock') {
