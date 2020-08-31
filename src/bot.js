@@ -70,6 +70,10 @@ client.on('message', async (message) => {
         message.channel.send('N🧑🏿')
     }
 
+    if (message.content === 'bob ride the wave') {
+        message.channel.send('🏄‍♂️ bruh')
+    }
+
     if (message.content === 'bob start the clock') {
         const voiceChannel = message.member.voice.channel
         
