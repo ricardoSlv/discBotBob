@@ -5,47 +5,91 @@ const { Client } = require('discord.js')
 const ytdl = require('ytdl-core');
 const cron = require('node-cron');
 
+const { MongoClient } = require('mongodb')
+const uri=`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PWD}@discbotdb.ildnc.mongodb.net?retryWrites=true&w=majority`
+
 const hourNotice = (channel,voiceChannel) => 
-    cron.schedule('0 * * * *', () => {
-        const currHour = new Date().getHours()
-        channel.send(`It's ${currHour} o'clock 🕒`)
-        if (voiceChannel) {
-            playBell(voiceChannel, currHour % 12)
-        }
-    })
+cron.schedule('0 * * * *', () => {
+    const currHour = new Date().getHours()
+    channel.send(`It's ${currHour} o'clock 🕒`)
+    if (voiceChannel) {
+        playBell(voiceChannel, currHour % 12)
+    }
+})
 
 const halfHourNotice = (channel,voiceChannel) => 
-        cron.schedule('30 * * * *', () => {
-        const currHour = new Date().getHours()
-        channel.send(`It's half past ${currHour} 🕒`)
-        if (voiceChannel) {
+cron.schedule('30 * * * *', () => {
+    const currHour = new Date().getHours()
+    channel.send(`It's half past ${currHour} 🕒`)
+    if (voiceChannel) {
             playBell(voiceChannel, 2)
         }
     })
-
-const status = {
-    clockNotice: false,
-    clockChannels: [null,null],
-    hourNotice: null,
-    halfHourNotice: null
-}
-
-async function playYoutube(channel, link) {
-
-    const connection = await channel.join();
-    connection.play(ytdl(link, { filter: 'audioonly' }))
-        .on('finish', () => setTimeout(() => { channel.leave() }, 500))
-}
-
-async function playBell(channel, rings) {
-    if (rings === 0) {
-        setTimeout(() => { channel.leave() }, 500)
+    
+    const status = {
+        clockNotice: false,
+        clockChannels: [null,null],
+        hourNotice: null,
+        halfHourNotice: null
     }
-    else {
+    
+    async function playYoutube(channel, link) {
+        
         const connection = await channel.join();
-        connection.play(ytdl('https://www.youtube.com/watch?v=dNl4-w9ZrBs', { filter: 'audioonly', volume: 0.35 }))
-            .on('finish', () => playBell(channel, rings - 1))
+        connection.play(ytdl(link, { filter: 'audioonly' }))
+        .on('finish', () => setTimeout(() => { channel.leave() }, 500))
     }
+    
+    async function playBell(channel, rings) {
+        if (rings === 0) {
+            setTimeout(() => { channel.leave() }, 500)
+        }
+        else {
+            const connection = await channel.join();
+            connection.play(ytdl('https://www.youtube.com/watch?v=dNl4-w9ZrBs', { filter: 'audioonly', volume: 0.35 }))
+            .on('finish', () => playBell(channel, rings - 1))
+        }
+    }
+    
+    async function getRandomQuote(){
+        const DBclient = new MongoClient(uri,{ useUnifiedTopology: true });
+        let quote = ''
+        try {
+            await DBclient.connect();
+            const database=DBclient.db('bobDB')
+            const collection = database.collection('quotes');
+            
+            const n = await collection.countDocuments()
+            const skips=Math.floor(Math.random()*n)
+            const cursor = collection.find({},{skip:skips})
+            const quoteObj= await cursor.next()
+        quote = `${quoteObj.text} - ${quoteObj.author}`
+        
+      }catch(error){
+        // quote = 'There was an error at line 😥'
+        quote = error.toString()
+      } finally {
+        await DBclient.close();
+      }
+      return quote
+}
+
+async function addQuote(authorIn,textIn){
+    const DBclient = new MongoClient(uri,{ useUnifiedTopology: true });
+    let status = ''
+    try {
+        await DBclient.connect();
+        const database=DBclient.db('bobDB')
+        const collection = database.collection('quotes');
+  
+        collection.insertOne({author: authorIn,text: textIn})
+        status = 'The quote has been added 🙂' 
+      }catch(error){
+        status = 'There was an error 😥'
+      } finally {
+        await DBclient.close();
+      }
+      return status
 }
 
 const client = new Client()
@@ -130,6 +174,14 @@ client.on('message', async (message) => {
         } else {
             message.reply('You need to join a voice channel first!')
         }
+    }
+    if (msgTokens[0] === 'bob'&&msgTokens[1] === 'add'&&msgTokens[2] === 'quote') {
+        message.reply(await addQuote(msgTokens[4],msgTokens[3]))
+    }
+    if (msgTokens[0] === 'bob'&&msgTokens[1] === 'random'&&msgTokens[2] === 'quote') {
+        const quote = await getRandomQuote()
+        console.log('quote',quote)
+        message.reply(quote)
     }
 })
 
