@@ -56,8 +56,8 @@ cron.schedule('30 * * * *', () => {
         let quote = ''
         try {
             await DBclient.connect();
-            const database=DBclient.db('bobDB')
-            const collection = database.collection('quotes');
+            const database=DBclient.db(process.env.DB_NAME)
+            const collection = database.collection('quotes')
             
             const n = await collection.countDocuments()
             const skips=Math.floor(Math.random()*n)
@@ -69,7 +69,7 @@ cron.schedule('30 * * * *', () => {
         // quote = 'There was an error at line 😥'
         quote = error.toString()
       } finally {
-        await DBclient.close();
+        await DBclient.close()
       }
       return quote
 }
@@ -79,15 +79,16 @@ async function addQuote(authorIn,textIn){
     let status = ''
     try {
         await DBclient.connect();
-        const database=DBclient.db('bobDB')
-        const collection = database.collection('quotes');
+        const database=DBclient.db(process.env.DB_NAME)
+        const collection = database.collection('quotes')
   
         collection.insertOne({author: authorIn,text: textIn})
         status = 'The quote has been added 🙂' 
       }catch(error){
-        status = 'There was an error 😥'
+        status = error.toString()
+        // status = 'There was an error 😥'
       } finally {
-        await DBclient.close();
+        await DBclient.close()
       }
       return status
 }
