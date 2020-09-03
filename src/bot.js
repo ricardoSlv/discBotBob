@@ -176,10 +176,10 @@ client.on('message', async (message) => {
             message.reply('You need to join a voice channel first!')
         }
     }
-    if (msgTokens[0] === 'bob'&&msgTokens[1] === 'add'&&msgTokens[2] === 'quote') {
-        message.reply(await addQuote(msgTokens[4],msgTokens[3]))
+    if (msgTokens[0] === 'baq') {
+        message.reply(await addQuote(msgTokens[1],msgTokens[2]))
     }
-    if (msgTokens[0] === 'bob'&&msgTokens[1] === 'random'&&msgTokens[2] === 'quote') {
+    if (msgTokens[0] === 'brq') {
         const quote = await getRandomQuote()
         console.log('quote',quote)
         message.reply(quote)
