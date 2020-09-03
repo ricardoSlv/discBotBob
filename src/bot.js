@@ -33,45 +33,66 @@ cron.schedule('30 * * * *', () => {
         halfHourNotice: null
     }
     
-    async function playYoutube(channel, link) {
-        
+async function playYoutube(channel, link) {   
+    const connection = await channel.join();
+    connection.play(ytdl(link, { filter: 'audioonly' }))
+    .on('finish', () => setTimeout(() => { channel.leave() }, 500))
+}
+    
+async function playBell(channel, rings) {
+    if (rings === 0) {
+        setTimeout(() => { channel.leave() }, 500)
+    }
+    else {
         const connection = await channel.join();
-        connection.play(ytdl(link, { filter: 'audioonly' }))
-        .on('finish', () => setTimeout(() => { channel.leave() }, 500))
+        connection.play(ytdl('https://www.youtube.com/watch?v=dNl4-w9ZrBs', { filter: 'audioonly', volume: 0.35 }))
+        .on('finish', () => playBell(channel, rings - 1))
     }
+}
     
-    async function playBell(channel, rings) {
-        if (rings === 0) {
-            setTimeout(() => { channel.leave() }, 500)
-        }
-        else {
-            const connection = await channel.join();
-            connection.play(ytdl('https://www.youtube.com/watch?v=dNl4-w9ZrBs', { filter: 'audioonly', volume: 0.35 }))
-            .on('finish', () => playBell(channel, rings - 1))
-        }
-    }
-    
-    async function getRandomQuote(){
-        const DBclient = new MongoClient(uri,{ useUnifiedTopology: true });
-        let quote = ''
-        try {
-            await DBclient.connect();
-            const database=DBclient.db(process.env.DB_NAME)
-            const collection = database.collection('quotes')
-            
-            const n = await collection.countDocuments()
-            const skips=Math.floor(Math.random()*n)
-            const cursor = collection.find({},{skip:skips})
-            const quoteObj= await cursor.next()
-        quote = `${quoteObj.text} - ${quoteObj.author}`
+async function getRandomQuote(){
+    const DBclient = new MongoClient(uri,{ useUnifiedTopology: true });
+    let quote = ''
+    try {
+        await DBclient.connect();
+        const database=DBclient.db(process.env.DB_NAME)
+        const collection = database.collection('quotes')
         
-      }catch(error){
-        // quote = 'There was an error at line 😥'
-        quote = error.toString()
-      } finally {
-        await DBclient.close()
-      }
-      return quote
+        const n = await collection.countDocuments()
+        const skips=Math.floor(Math.random()*n)
+        const cursor = collection.find({},{skip:skips})
+        const quoteObj= await cursor.next()
+        quote = `${quoteObj.text} - ${quoteObj.author}`
+      
+    }catch(error){
+      // quote = 'There was an error at line 😥'
+      quote = error.toString()
+    } finally {
+      await DBclient.close()
+    }
+    return quote
+}
+
+async function getAllQuotes(){
+    const DBclient = new MongoClient(uri,{ useUnifiedTopology: true });
+    let quotes = ''
+    try {
+        await DBclient.connect();
+        const database=DBclient.db(process.env.DB_NAME)
+        const collection = database.collection('quotes')
+        
+        const cursor = collection.find({})
+
+        quotes=(await cursor.toArray())
+            .reduce((quotes,quoteObj)=>quotes.concat(`${quoteObj.text} - ${quoteObj.author}`,'\n'),'\n')
+      
+    }catch(error){
+      // quote = 'There was an error at line 😥'
+      quotes = error.toString()
+    } finally {
+      await DBclient.close()
+    }
+    return quotes
 }
 
 async function addQuote(authorIn,textIn){
@@ -84,13 +105,13 @@ async function addQuote(authorIn,textIn){
   
         collection.insertOne({author: authorIn,text: textIn})
         status = 'The quote has been added 🙂' 
-      }catch(error){
+    }catch(error){
         status = error.toString()
         // status = 'There was an error 😥'
-      } finally {
+    } finally {
         await DBclient.close()
-      }
-      return status
+    }
+    return status
 }
 
 const client = new Client()
@@ -177,12 +198,28 @@ client.on('message', async (message) => {
         }
     }
     if (msgTokens[0] === 'baq') {
-        message.reply(await addQuote(msgTokens[1],msgTokens[2]))
+        let i=1
+        let author=''
+        let text=''
+        while(msgTokens[i]!='-'){
+            text=text.concat(msgTokens[i],' ')
+            i++
+        }
+        i++
+        while(msgTokens[i]){
+            author=author.concat(msgTokens[i],' ')
+            i++
+        }
+        message.reply(await addQuote(author,text))
+
     }
     if (msgTokens[0] === 'brq') {
         const quote = await getRandomQuote()
-        console.log('quote',quote)
         message.reply(quote)
+    }
+    if (msgTokens[0] === 'blq') {
+        const quotes = await getAllQuotes()
+        message.reply(quotes)
     }
 })
 
