@@ -58,14 +58,10 @@ async function getRandomQuote(){
         const database=DBclient.db(process.env.DB_NAME)
         const collection = database.collection('quotes')
         
-        const n = await collection.countDocuments()
-        const skips=Math.floor(Math.random()*n)
-        const cursor = collection.find({},{skip:skips})
-        const quoteObj= await cursor.next()
+        const quoteObj = await collection.aggregate([{$sample:{size:1}}]).next()
         quote = `${quoteObj.text} - ${quoteObj.author}`
       
     }catch(error){
-      // quote = 'There was an error at line 😥'
       quote = error.toString()
     } finally {
       await DBclient.close()
@@ -87,7 +83,6 @@ async function getAllQuotes(){
             .reduce((quotes,quoteObj)=>quotes.concat(`${quoteObj.text} - ${quoteObj.author}`,'\n'),'\n')
       
     }catch(error){
-      // quote = 'There was an error at line 😥'
       quotes = error.toString()
     } finally {
       await DBclient.close()
@@ -100,14 +95,13 @@ async function addQuote(authorIn,textIn){
     let status = ''
     try {
         await DBclient.connect();
-        const database=DBclient.db(process.env.DB_NAME)
+        const database = DBclient.db(process.env.DB_NAME)
         const collection = database.collection('quotes')
   
         collection.insertOne({author: authorIn,text: textIn})
         status = 'The quote has been added 🙂' 
     }catch(error){
         status = error.toString()
-        // status = 'There was an error 😥'
     } finally {
         await DBclient.close()
     }
