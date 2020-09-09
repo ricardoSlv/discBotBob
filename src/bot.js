@@ -10,8 +10,8 @@ const uri=`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PWD}@discbotdb.
 
 const hourNotice = (channel,voiceChannel) => 
 cron.schedule('0 * * * *', () => {
-    const currHour = new Date().getHours()
-    channel.send(`It's ${currHour} o'clock 🕒`)
+    const currHour = new Date().toLocaleString('en-GB', {hour: '2-digit',   hour12: false, timeZone: 'Europe/Lisbon' })
+    channel.send(`It's ${(currHour)} o'clock 🕒`)
     if (voiceChannel) {
         playBell(voiceChannel, currHour % 12)
     }
@@ -19,7 +19,7 @@ cron.schedule('0 * * * *', () => {
 
 const halfHourNotice = (channel,voiceChannel) => 
 cron.schedule('30 * * * *', () => {
-    const currHour = new Date().getHours()
+    const currHour = new Date().toLocaleString('en-GB', {hour: '2-digit',   hour12: false, timeZone: 'Europe/Lisbon' })
     channel.send(`It's half past ${currHour} 🕒`)
     if (voiceChannel) {
             playBell(voiceChannel, 2)
@@ -57,8 +57,8 @@ async function getRandomQuote(){
         await DBclient.connect();
         const database=DBclient.db(process.env.DB_NAME)
         const collection = database.collection('quotes')
-        
         const quoteObj = await collection.aggregate([{$sample:{size:1}}]).next()
+        
         quote = `${quoteObj.text} - ${quoteObj.author}`
       
     }catch(error){
@@ -76,7 +76,6 @@ async function getAllQuotes(){
         await DBclient.connect();
         const database=DBclient.db(process.env.DB_NAME)
         const collection = database.collection('quotes')
-        
         const cursor = collection.find({})
 
         quotes=(await cursor.toArray())
@@ -97,8 +96,8 @@ async function addQuote(authorIn,textIn){
         await DBclient.connect();
         const database = DBclient.db(process.env.DB_NAME)
         const collection = database.collection('quotes')
-  
         collection.insertOne({author: authorIn,text: textIn})
+        
         status = 'The quote has been added 🙂' 
     }catch(error){
         status = error.toString()
