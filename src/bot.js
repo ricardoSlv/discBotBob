@@ -180,7 +180,7 @@ client.on('message', async (message) => {
                     playYoutube(voiceChannel, 'https://www.youtube.com/watch?v=PtcHNvVooLQ')
                     break
                 case 'bell':
-                    playBell(voiceChannel, msgTokens[2])
+                    playBell(voiceChannel, 1)
                     break
                 case 'belldie':
                     playYoutube(voiceChannel, 'https://www.youtube.com/watch?v=zDBrQWq82-Q')
