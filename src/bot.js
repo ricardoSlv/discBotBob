@@ -107,9 +107,7 @@ client.on('message', async (message) => {
         case 'blq':
             const quotes = await getAllQuotes()
             message.reply(quotes)
-            break
-
-            
+            break     
     }
 })
 
