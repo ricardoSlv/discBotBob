@@ -65,7 +65,28 @@ client.on('message', async (message) => {
                 status.hourNotice.destroy()
                 status.halfHourNotice.destroy()
             }
-            break        
+            break 
+        case 'bob help':
+            const sounds = Array.from(soundMap.keys()).join(', ')
+            message.reply(
+                `Available commands: 
+                👄 Speech:
+                \u2001➤ bob say hi 
+                \u2001➤ bob say the n word 
+                \u2001➤ bob ride the wave  
+                
+                🕒 Clock: 
+                \u2001➤ bob start the clock  
+                \u2001➤ bob stop the clock 
+                
+                🎵 Sounds: 
+                \u2001➤ bp + [${sounds}] 
+                 
+                📝 Quotes: 
+                \u2001➤ baq (Add quote) 
+                \u2001➤ brq (Random Quote) 
+                ‎‎‎‎‎‎‎‎‎‎‎‎‎‎\u2001➤ blq (List Quotes)`.replace(/   +/g, '')
+            )           
     }
 
     switch (msgTokens[0]){
