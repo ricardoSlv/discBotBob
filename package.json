@@ -1,7 +1,7 @@
 {
-  "name": "discordbell",
+  "name": "discordbotbob",
   "version": "1.0.0",
-  "description": "A discord bot that mimics a church bell",
+  "description": "A discord bot that does some",
   "main": "./src/bot.js",
   "scripts": {
     "start": "node ./src/bot.js",
@@ -22,6 +22,7 @@
     "url": "https://github.com/ricardoSlv/discordBell/issues"
   },
   "homepage": "https://github.com/ricardoSlv/discordBell#readme",
+  "type": "module",
   "dependencies": {
     "discord.js": "^12.3.1",
     "dotenv": "^8.2.0",
