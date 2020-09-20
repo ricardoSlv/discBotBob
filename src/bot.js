@@ -8,7 +8,8 @@ import {addQuote,getRandomQuote,getAllQuotes,
         getAllPlaylists,addPlayList,addSongToPlayList,getPlaylist
     } from './db.js'
 import {soundMap,hourNotice,halfHourNotice,playBell,playYoutube,playPlaylist} from './sound.js'
-import {parseAddQuote,parsePlaylist,parsePlaylistSongLink} from './utils.js'
+import {parseAddQuote,
+        parsePlaylist,parseIconPlaylist,parsePlaylistSongLink} from './utils.js'
 
 const status = {
     clockNotice: false,
@@ -117,9 +118,8 @@ client.on('message', async (message) => {
             message.reply(quotes)
             break   
         case 'bapl':
-            //TODO: playlists have icons
-            const [playlist] = parsePlaylist(msgTokens)
-            message.reply(await addPlayList(playlist))
+            const [icon,playlist] = parseIconPlaylist(msgTokens)
+            message.reply(await addPlayList(icon,playlist))
             break  
         case 'baspl':
             const [playlist2,songName,ytbLink] = parsePlaylistSongLink(msgTokens)

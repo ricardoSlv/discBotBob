@@ -11,7 +11,7 @@ export function parseAddQuote(msgTokens){
     return [author.trimEnd(),text.trimEnd()]
 }
 
-export function parsePlaylist (msgTokens) {
+export function parsePlaylist(msgTokens) {
     let [i,playList]=[1,'']
 
     for(i;msgTokens[i];i++)
@@ -20,9 +20,21 @@ export function parsePlaylist (msgTokens) {
     return [playList.trimEnd()]
 }
 
-export function parsePlaylistSongLink (msgTokens) {
+export function parseIconPlaylist(msgTokens) {
+    let [i,icon,playList]=[1,'','']
+    
+    icon=msgTokens[i]
+    i++
+    for(i;msgTokens[i];i++)
+        playList=playList.concat(msgTokens[i],' ')
+
+    return [icon,playList.trimEnd()]
+}
+
+export function parsePlaylistSongLink(msgTokens) {
     let [i,playlist,song,ytbLink]=[1,'','','']
 
+    
     for(i;msgTokens[i]!='-';i++)
         playlist=playlist.concat(msgTokens[i],' ')
     i++
@@ -31,5 +43,5 @@ export function parsePlaylistSongLink (msgTokens) {
     i++
     ytbLink=ytbLink.concat(msgTokens[i],' ')
 
-    return [playlist.trimEnd(),song.trimEnd(),ytbLink.trimEnd()]
+    return [playlist.trimEnd(),song.trimEnd(),,ytbLink.trimEnd()]
 }

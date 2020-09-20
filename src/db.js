@@ -63,14 +63,14 @@ export async function addQuote(authorIn,textIn){
     return status
 }
 
-export async function addPlayList(playlistName){
+export async function addPlayList(icon,playlistName){
   const DBclient = new MongoClient(uri,{ useUnifiedTopology: true })
   let status = ''
   try {
     await DBclient.connect();
     const database = DBclient.db(process.env.DB_NAME)
     const collection = database.collection('playlists')
-    await collection.insertOne({name: playlistName,songs: []})
+    await collection.insertOne({icon: icon, name: playlistName,songs: []})
       
     status = 'The playlist has been created 🙂' 
   }catch(error){
@@ -118,8 +118,7 @@ export async function getAllPlaylists(){
     const collection = database.collection('playlists')
     const cursor = collection.find({})
 
-    playlists = (await cursor.toArray()).map(({name,songs})=>`\n${name}\n${songs.map(({name})=>`\u2001➤ ${name}`).join('\n')}`).join('\n')
-    console.log((await cursor.toArray()).map(x=>x.name))
+    playlists = (await cursor.toArray()).map(({name,icon,songs})=>`\n${icon} ${name}\n${songs.map(({name})=>`\u2001➤ ${name}`).join('\n')}`).join('\n')
   }catch(error){
     playlists = error.toString()
   } finally {
