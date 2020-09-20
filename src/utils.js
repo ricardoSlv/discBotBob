@@ -34,14 +34,13 @@ export function parseIconPlaylist(msgTokens) {
 export function parsePlaylistSongLink(msgTokens) {
     let [i,playlist,song,ytbLink]=[1,'','','']
 
-    
     for(i;msgTokens[i]!='-';i++)
         playlist=playlist.concat(msgTokens[i],' ')
     i++
     for(i;msgTokens[i]!='-';i++)
         song=song.concat(msgTokens[i],' ')
     i++
-    ytbLink=ytbLink.concat(msgTokens[i],' ')
+    ytbLink=ytbLink.concat(msgTokens[i])
 
-    return [playlist.trimEnd(),song.trimEnd(),,ytbLink.trimEnd()]
+    return [playlist.trimEnd(),song.trimEnd(),ytbLink.trimEnd()]
 }
