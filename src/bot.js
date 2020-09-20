@@ -4,9 +4,9 @@ import dotenv from 'dotenv';
 dotenv.config();
 import { Client } from 'discord.js';
 
-import {addQuote,getRandomQuote,getAllQuotes} from './db.js'
+import {addQuote,getRandomQuote,getAllQuotes,getAllPlaylists,addPlayList,addSongToPlayList} from './db.js'
 import {soundMap,hourNotice,halfHourNotice,playBell,playYoutube} from './sound.js'
-import {parseQuote} from './utils.js'
+import {parseAddQuote,parsePlaylist,parsePlaylistSongLink} from './utils.js'
 
 const status = {
     clockNotice: false,
@@ -79,13 +79,19 @@ client.on('message', async (message) => {
                 \u2001➤ bob start the clock  
                 \u2001➤ bob stop the clock 
                 
-                🎵 Sounds: 
+                🔊 Sounds: 
                 \u2001➤ bp + [${sounds}] 
                  
                 📝 Quotes: 
-                \u2001➤ baq (Add quote) 
+                \u2001➤ baq + Author - Quote (Add quote) 
                 \u2001➤ brq (Random Quote) 
-                ‎‎‎‎‎‎‎‎‎‎‎‎‎‎\u2001➤ blq (List Quotes)`.replace(/   +/g, '')
+                ‎‎‎‎‎‎‎‎‎‎‎‎‎‎\u2001➤ blq (List Quotes)
+                
+                🎵 Playlists
+                \u2001➤ bapl + PlaylistName (Add playlist) 
+                \u2001➤ baspl + PlaylistName - SongName - YoutubeLink (Add song to playlist) 
+                \u2001➤ blpl (List playlists) 
+                \u2001➤ bppl + PlaylistName (Play Playlist) `.replace(/   +/g, '')
             )           
     }
 
@@ -97,7 +103,7 @@ client.on('message', async (message) => {
                 message.reply('You need to join a voice channel first!')
             break
         case 'baq':
-            const [author,text] = parseQuote(msgTokens)
+            const [author,text] = parseAddQuote(msgTokens)
             message.reply(await addQuote(author,text))
             break
         case 'brq':
@@ -107,7 +113,21 @@ client.on('message', async (message) => {
         case 'blq':
             const quotes = await getAllQuotes()
             message.reply(quotes)
-            break     
+            break   
+        case 'bapl':
+            const [playlist] = parsePlaylist(msgTokens)
+            message.reply(await addPlayList(playlist))
+            break  
+        case 'baspl':
+            const [playlist2,songName,ytbLink] = parsePlaylistSongLink(msgTokens)
+            message.reply(await addSongToPlayList(playlist2,songName,ytbLink))
+            break  
+        case 'blpl':
+            const playlists = await getAllPlaylists()
+            message.reply(playlists)
+            break  
+        case 'bppl':
+            break            
     }
 })
 
