@@ -24,7 +24,7 @@ export function hourNotice(channel,voiceChannel){
 
 export function halfHourNotice(channel,voiceChannel){
     return schedule('30 * * * *', () => {
-        const currHour = new Date().toLocaleString('en-GB', {hour: '2-digit',   hour12: false, timeZone: 'Europe/Lisbon' })
+        const currHour = new Date().toLocaleString('en-GB', {hour: '2-digit', hour12: false, timeZone: 'Europe/Lisbon' })
         channel.send(`It's half past ${currHour} 🕒`)
         if (voiceChannel) {
                 playBell(voiceChannel, 2)
@@ -38,17 +38,21 @@ export async function playYoutube(channel, link) {
     .on('finish', () => setTimeout(() => { channel.leave() }, 500))
 }
 
-export async function playPlaylist(channel, songs,connection) {  
+export async function playPlaylist(channel, songs,connection,shuffle = false) {  
     if(!connection)
         connection = await channel.join();
 
     if(songs.length===0)
         setTimeout(() => { channel.leave() },500)
-    else
-    connection.play(ytdl(songs[0].ytbLink, { filter: 'audioonly' }))
-        .on('finish', () => setTimeout(() => { playPlaylist(channel,songs.slice(1),connection) }, 500))   
+    else{
+        const nextSong = shuffle ? Math.floor(Math.random*songs.length) : 0
+        let nextSongs = [...songs]
+        nextSongs.splice(nextSong,1)
+        connection.play(ytdl(songs[nextSong].ytbLink, { filter: 'audioonly' }))
+        .on('finish', () => setTimeout(() => { playPlaylist(channel,nextSongs,connection) }, 500))  
+    } 
 }
-    
+
 export async function playBell(channel, rings) {
     if (rings === 0) {
         setTimeout(() => { channel.leave() }, 500)

@@ -95,6 +95,7 @@ client.on('message', async (message) => {
                     \u2001➤ bapl + Icon + PlaylistName (Add playlist. Ex:"bapl 🐵 monkeySongs") 
                     \u2001➤ baspl + PlaylistName - SongName - YoutubeLink (Add song to playlist. Ex:"baspl monkeySongs - song1 - https://youtube.com/monkeysong ") 
                     \u2001➤ blpl (List playlists) 
+                    \u2001➤ bppls + PlaylistName (Play Playlist Shuffled)
                     \u2001➤ bppl + PlaylistName (Play Playlist) `.replace(/   +/g, '')
                 )           
         }
@@ -135,7 +136,14 @@ client.on('message', async (message) => {
                 const playlist3 = await getPlaylist(playlistName)
                 message.reply(`Playing ${playlist3.name}`)
                 playPlaylist(voiceChannel,playlist3.songs)
-                break            
+                break  
+            case 'bppls':
+                const [playlistName] = parsePlaylist(msgTokens)
+                const playlist4 = await getPlaylist(playlistName)
+                message.reply(`Playing ${playlist4.name}`)
+                const shuffle=true
+                playPlaylist(voiceChannel,playlist4.songs,shuffle)
+                break               
         }
     }
     catch(error){
