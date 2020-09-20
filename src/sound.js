@@ -45,7 +45,7 @@ export async function playPlaylist(channel, songs,connection,shuffle = false) {
     if(songs.length===0)
         setTimeout(() => { channel.leave() },500)
     else{
-        const nextSong = shuffle ? Math.floor(Math.random*songs.length) : 0
+        const nextSong = shuffle ? Math.floor(Math.random()*songs.length) : 0
         let nextSongs = [...songs]
         nextSongs.splice(nextSong,1)
         connection.play(ytdl(songs[nextSong].ytbLink, { filter: 'audioonly' }))
