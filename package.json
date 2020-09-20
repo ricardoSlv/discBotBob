@@ -1,7 +1,7 @@
 {
   "name": "discordbotbob",
   "version": "1.0.0",
-  "description": "A discord bot that does some",
+  "description": "A discord bot that does executes various commands",
   "main": "./src/bot.js",
   "scripts": {
     "start": "node ./src/bot.js",
@@ -9,12 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ricardoSlv/discordBell.git"
+    "url": "git+https://github.com/ricardoSlv/discBotBob.git"
   },
   "keywords": [
     "bot",
     "discord",
-    "bell"
+    "sound",
+    "quotes",
+    "playlist"
   ],
   "author": "ricardoSlv",
   "license": "ISC",
