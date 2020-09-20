@@ -8,7 +8,7 @@ export function parseAddQuote(msgTokens){
     for(i;msgTokens[i];i++)
         author=author.concat(msgTokens[i],' ')
 
-    return [author,text]
+    return [author.trimEnd(),text.trimEnd()]
 }
 
 export function parsePlaylist (msgTokens) {
@@ -17,7 +17,7 @@ export function parsePlaylist (msgTokens) {
     for(i;msgTokens[i];i++)
         playList=playList.concat(msgTokens[i],' ')
 
-    return [playList]
+    return [playList.trimEnd()]
 }
 
 export function parsePlaylistSongLink (msgTokens) {
@@ -31,5 +31,5 @@ export function parsePlaylistSongLink (msgTokens) {
     i++
     ytbLink=ytbLink.concat(msgTokens[i],' ')
 
-    return [playlist,song,ytbLink]
+    return [playlist.trimEnd(),song.trimEnd(),ytbLink.trimEnd()]
 }

@@ -118,11 +118,29 @@ export async function getAllPlaylists(){
     const collection = database.collection('playlists')
     const cursor = collection.find({})
 
-    playlists = (await cursor.toArray()).map(({name,songs})=>`\n ${name}\n ${songs.map(({name})=>`\u2001➤ ${name}`)}`)
+    playlists = (await cursor.toArray()).map(({name,songs})=>`\n${name}\n${songs.map(({name})=>`\u2001➤ ${name}`).join('\n')}`).join('\n')
+    console.log((await cursor.toArray()).map(x=>x.name))
   }catch(error){
     playlists = error.toString()
   } finally {
     await DBclient.close()
   }
   return playlists
+}
+
+export async function getPlaylist(playlistName){
+  const DBclient = new MongoClient(uri,{ useUnifiedTopology: true })
+  let playlist
+  try {
+    await DBclient.connect()
+    const database = DBclient.db(process.env.DB_NAME)
+    const collection = database.collection('playlists')
+    playlist = await collection.findOne({name: playlistName})
+
+  }catch(error){
+    playlist = error.toString()
+  } finally {
+    await DBclient.close()
+  }
+  return playlist
 }

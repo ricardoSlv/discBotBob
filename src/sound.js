@@ -37,6 +37,17 @@ export async function playYoutube(channel, link) {
     connection.play(ytdl(link, { filter: 'audioonly' }))
     .on('finish', () => setTimeout(() => { channel.leave() }, 500))
 }
+
+export async function playPlaylist(channel, songs,connection) {  
+    if(!connection)
+        connection = await channel.join();
+
+    if(songs.length===0)
+        setTimeout(() => { channel.leave() },500)
+    else
+    connection.play(ytdl(songs[0].ytbLink, { filter: 'audioonly' }))
+        .on('finish', () => setTimeout(() => { playPlaylist(channel,songs.slice(1),connection) }, 500))   
+}
     
 export async function playBell(channel, rings) {
     if (rings === 0) {

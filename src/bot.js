@@ -4,8 +4,10 @@ import dotenv from 'dotenv';
 dotenv.config();
 import { Client } from 'discord.js';
 
-import {addQuote,getRandomQuote,getAllQuotes,getAllPlaylists,addPlayList,addSongToPlayList} from './db.js'
-import {soundMap,hourNotice,halfHourNotice,playBell,playYoutube} from './sound.js'
+import {addQuote,getRandomQuote,getAllQuotes,
+        getAllPlaylists,addPlayList,addSongToPlayList,getPlaylist
+    } from './db.js'
+import {soundMap,hourNotice,halfHourNotice,playBell,playYoutube,playPlaylist} from './sound.js'
 import {parseAddQuote,parsePlaylist,parsePlaylistSongLink} from './utils.js'
 
 const status = {
@@ -115,6 +117,7 @@ client.on('message', async (message) => {
             message.reply(quotes)
             break   
         case 'bapl':
+            //TODO: playlists have icons
             const [playlist] = parsePlaylist(msgTokens)
             message.reply(await addPlayList(playlist))
             break  
@@ -127,6 +130,9 @@ client.on('message', async (message) => {
             message.reply(playlists)
             break  
         case 'bppl':
+            const [playlistName] = parsePlaylist(msgTokens)
+            const playlist3 = await getPlaylist(playlistName)
+            playPlaylist(voiceChannel,playlist3.songs)
             break            
     }
 })
