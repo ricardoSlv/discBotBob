@@ -138,8 +138,8 @@ client.on('message', async (message) => {
                 playPlaylist(voiceChannel,playlist3.songs)
                 break  
             case 'bppls':
-                const [playlistName] = parsePlaylist(msgTokens)
-                const playlist4 = await getPlaylist(playlistName)
+                const [playlistName2] = parsePlaylist(msgTokens)
+                const playlist4 = await getPlaylist(playlistName2)
                 message.reply(`Playing ${playlist4.name}`)
                 const shuffle=true
                 playPlaylist(voiceChannel,playlist4.songs,shuffle)
