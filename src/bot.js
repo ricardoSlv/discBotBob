@@ -92,7 +92,7 @@ client.on('message', async (message) => {
                     ‎‎‎‎‎‎‎‎‎‎‎‎‎‎\u2001➤ blq (List Quotes)
                     
                     🎵 Playlists
-                    \u2001➤ bapl + Icon -  PlaylistName (Add playlist. Ex:"bapl 🐵 - monkeySongs") 
+                    \u2001➤ bapl + Icon -  PlaylistName (Add playlist. Ex:"bapl 🐵 monkeySongs") 
                     \u2001➤ baspl + PlaylistName - SongName - YoutubeLink (Add song to playlist. Ex:"baspl monkeySongs - song1 - https://youtube.com/monkeysong ") 
                     \u2001➤ blpl (List playlists) 
                     \u2001➤ bppl + PlaylistName (Play Playlist) `.replace(/   +/g, '')
