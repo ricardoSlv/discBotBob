@@ -38,7 +38,7 @@ export async function playYoutube(channel, link) {
     .on('finish', () => setTimeout(() => { channel.leave() }, 500))
 }
 
-export async function playPlaylist(channel, songs,connection,shuffle = false) {  
+export async function playPlaylist(channel, songs, shuffle = false, connection) {  
     if(!connection)
         connection = await channel.join();
 
@@ -49,7 +49,7 @@ export async function playPlaylist(channel, songs,connection,shuffle = false) {
         let nextSongs = [...songs]
         nextSongs.splice(nextSong,1)
         connection.play(ytdl(songs[nextSong].ytbLink, { filter: 'audioonly' }))
-        .on('finish', () => setTimeout(() => { playPlaylist(channel,nextSongs,connection) }, 500))  
+            .on('finish', () => setTimeout(() => { playPlaylist(channel,nextSongs,connection) }, 500))  
     } 
 }
 
