@@ -132,6 +132,7 @@ client.on('message', async (message) => {
         case 'bppl':
             const [playlistName] = parsePlaylist(msgTokens)
             const playlist3 = await getPlaylist(playlistName)
+            message.reply(`Playing ${playlist3}`)
             playPlaylist(voiceChannel,playlist3.songs)
             break            
     }
