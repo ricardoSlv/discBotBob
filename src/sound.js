@@ -12,6 +12,17 @@ export const soundMap =  new Map([
     ['belldie','https://www.youtube.com/watch?v=zDBrQWq82-Q']
 ])
 
+async function playBell(channel, rings) {
+    if (rings === 0) {
+        setTimeout(() => { channel.leave() }, 500)
+    }
+    else {
+        const connection = await channel.join();
+        connection.play(ytdl('https://www.youtube.com/watch?v=dNl4-w9ZrBs', { filter: 'audioonly', volume: 0.35 }))
+        .on('finish', () => playBell(channel, rings - 1))
+    }
+}
+
 export function hourNotice(channel,voiceChannel){
     return schedule('0 * * * *', () => {
         const currHour = new Date().toLocaleString('en-GB', {hour: '2-digit',   hour12: false, timeZone: 'Europe/Lisbon' })
@@ -53,13 +64,3 @@ export async function playPlaylist(channel, songs, shuffle = false, connection) 
     } 
 }
 
-export async function playBell(channel, rings) {
-    if (rings === 0) {
-        setTimeout(() => { channel.leave() }, 500)
-    }
-    else {
-        const connection = await channel.join();
-        connection.play(ytdl('https://www.youtube.com/watch?v=dNl4-w9ZrBs', { filter: 'audioonly', volume: 0.35 }))
-        .on('finish', () => playBell(channel, rings - 1))
-    }
-}

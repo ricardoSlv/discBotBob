@@ -143,3 +143,21 @@ export async function getPlaylist(playlistName){
   }
   return playlist
 }
+
+export async function renamePlaylist(playlistName,newPlayListName){
+  const DBclient = new MongoClient(uri,{ useUnifiedTopology: true })
+  let status
+  try {
+    await DBclient.connect()
+    const database = DBclient.db(process.env.DB_NAME)
+    const collection = database.collection('playlists')
+    await collection.updateOne({name:playlistName},{$set:{name: newPlayListName}})
+    status= 'The playlist was renamed 🙂'
+
+  }catch(error){
+    status = error.toString()
+  } finally {
+    await DBclient.close()
+  }
+  return status
+}

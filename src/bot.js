@@ -5,11 +5,11 @@ dotenv.config();
 import { Client } from 'discord.js';
 
 import {addQuote,getRandomQuote,getAllQuotes,
-        getAllPlaylists,addPlayList,addSongToPlayList,getPlaylist
+        getAllPlaylists,addPlayList,addSongToPlayList,getPlaylist,renamePlaylist
     } from './db.js'
-import {soundMap,hourNotice,halfHourNotice,playBell,playYoutube,playPlaylist} from './sound.js'
+import {soundMap,hourNotice,halfHourNotice,playYoutube,playPlaylist} from './sound.js'
 import {parseAddQuote,
-        parsePlaylist,parseIconPlaylist,parsePlaylistSongLink} from './utils.js'
+        parsePlaylist,parseTwoPlaylists,parseIconPlaylist,parsePlaylistSongLink} from './parser.js'
 
 const status = {
     clockNotice: false,
@@ -93,7 +93,8 @@ client.on('message', async (message) => {
                     
                     🎵 Playlists
                     \u2001➤ bapl + Icon + PlaylistName (Add playlist. Ex:"bapl 🐵 monkeySongs") 
-                    \u2001➤ baspl + PlaylistName - SongName - YoutubeLink (Add song to playlist. Ex:"baspl monkeySongs - song1 - https://youtube.com/monkeysong ") 
+                    \u2001➤ baspl + PlaylistName - SongName - YoutubeLink (Add song to playlist. Ex:"baspl monkeySongs - song1 - https://youtube.com/monkeysong ")
+                    \u2001➤ bupln + PlaylistName - NewPlaylistName (Update Playlist Name)
                     \u2001➤ blpl (List playlists) 
                     \u2001➤ bppls + PlaylistName (Play Playlist Shuffled)
                     \u2001➤ bppl + PlaylistName (Play Playlist) `.replace(/   +/g, '')
@@ -107,43 +108,56 @@ client.on('message', async (message) => {
                 else 
                     message.reply('You need to join a voice channel first!')
                 break
-            case 'baq':
+            case 'baq':{
                 const [author,text] = parseAddQuote(msgTokens)
                 message.reply(await addQuote(author,text))
+            }
                 break
-            case 'brq':
+            case 'brq':{
                 const quote = await getRandomQuote()
                 message.reply(quote)
+            }
                 break
-            case 'blq':
+            case 'blq':{
                 const quotes = await getAllQuotes()
                 message.reply(quotes)
+            }
                 break   
-            case 'bapl':
+            case 'bapl':{
                 const [icon,playlist] = parseIconPlaylist(msgTokens)
                 message.reply(await addPlayList(icon,playlist))
+            }
                 break  
-            case 'baspl':
-                const [playlist2,songName,ytbLink] = parsePlaylistSongLink(msgTokens)
-                message.reply(await addSongToPlayList(playlist2,songName,ytbLink))
+            case 'baspl':{
+                const [playlist,songName,ytbLink] = parsePlaylistSongLink(msgTokens)
+                message.reply(await addSongToPlayList(playlist,songName,ytbLink))
+            }
                 break  
-            case 'blpl':
+            case 'blpl':{
                 const playlists = await getAllPlaylists()
                 message.reply(playlists)
+            }
                 break  
-            case 'bppl':
+            case 'bppl':{
                 const [playlistName] = parsePlaylist(msgTokens)
-                const playlist3 = await getPlaylist(playlistName)
-                message.reply(`Playing ${playlist3.name}`)
-                playPlaylist(voiceChannel,playlist3.songs)
+                const playlist = await getPlaylist(playlistName)
+                message.reply(`Playing ${playlist.name}`)
+                playPlaylist(voiceChannel,playlist.songs)
+            }
                 break  
-            case 'bppls':
-                const [playlistName2] = parsePlaylist(msgTokens)
-                const playlist4 = await getPlaylist(playlistName2)
-                message.reply(`Playing ${playlist4.name}`)
+            case 'bppls':{
+                const [playlistName] = parsePlaylist(msgTokens)
+                const playlist = await getPlaylist(playlistName)
+                message.reply(`Playing ${playlist.name}`)
                 const shuffle=true
-                playPlaylist(voiceChannel,playlist4.songs,shuffle)
-                break               
+                playPlaylist(voiceChannel,playlist.songs,shuffle)
+            }
+                break  
+            case 'bupln':{
+                const [oldplaylistName,newPlaylistName] = parseTwoPlaylists(msgTokens)
+                message.reply(await renamePlaylist(oldplaylistName,newPlaylistName))
+            }
+                break              
         }
     }
     catch(error){

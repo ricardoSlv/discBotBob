@@ -20,15 +20,27 @@ export function parsePlaylist(msgTokens) {
     return [playList.trimEnd()]
 }
 
+export function parseTwoPlaylists(msgTokens) {
+    let [i,oldPlaylistName,newPlaylistName]=[1,'','']
+
+    for(i;msgTokens[i]!=='-';i++)
+        oldPlaylistName=oldPlaylistName.concat(msgTokens[i],' ')
+    i++
+    for(i;msgTokens[i];i++)
+        newPlaylistName=newPlaylistName.concat(msgTokens[i],' ')
+    
+    return [oldPlaylistName.trimEnd(),newPlaylistName.trimEnd()]
+}
+
 export function parseIconPlaylist(msgTokens) {
-    let [i,icon,playList]=[1,'','']
+    let [i,icon,playlist]=[1,'','']
     
     icon=msgTokens[i]
     i++
     for(i;msgTokens[i];i++)
-        playList=playList.concat(msgTokens[i],' ')
+        playlist=playlist.concat(msgTokens[i],' ')
 
-    return [icon,playList.trimEnd()]
+    return [icon,playlist.trimEnd()]
 }
 
 export function parsePlaylistSongLink(msgTokens) {
