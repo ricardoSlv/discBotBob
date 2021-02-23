@@ -1,107 +1,110 @@
+//@ts-check
 
-import dotenv from 'dotenv';
-dotenv.config();
+import dotenv from 'dotenv'
+dotenv.config()
 
-import mongodb from 'mongodb';
-const { MongoClient } = mongodb;
-const uri=`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PWD}@discbotdb.ildnc.mongodb.net?retryWrites=true&w=majority`
+import mongodb from 'mongodb'
+const { MongoClient } = mongodb
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PWD}@discbotdb.ildnc.mongodb.net?retryWrites=true&w=majority`
 
-export async function getRandomQuote(){
-    const DBclient = new MongoClient(uri,{ useUnifiedTopology: true })
-    let quote = ''
-    try {
-      await DBclient.connect();
-      const database = DBclient.db(process.env.DB_NAME)
-      const collection = database.collection('quotes')
-      const quoteObj = await collection.aggregate([{$sample:{size:1}}]).next()
-        
-      quote = `${quoteObj.text} - ${quoteObj.author}`
-      
-    }catch(error){
-      quote = error.toString()
-    } finally {
-      await DBclient.close()
-    }
-    return quote
+const DBclient = new MongoClient(uri, { useUnifiedTopology: true })
+
+let dbquotes
+let dbplaylists
+DBclient.connect().then(() => {
+  const database = DBclient.db(process.env.DB_NAME)
+  dbquotes = database.collection('quotes')
+  dbplaylists = database.collection('playlists')
+})
+
+export async function getRandomQuote() {
+  let quote = ''
+  try {
+    const quoteObj = await dbquotes.aggregate([{ $sample: { size: 1 } }]).next()
+    quote = `${quoteObj.text} - ${quoteObj.author}`
+  } catch (error) {
+    quote = error.toString()
+  }
+  return quote
 }
 
-export async function getAllQuotes(){
-    const DBclient = new MongoClient(uri,{ useUnifiedTopology: true })
-    let quotes = ''
-    try {
-        await DBclient.connect()
-        const database = DBclient.db(process.env.DB_NAME)
-        const collection = database.collection('quotes')
-        const cursor = collection.find({})
+export async function getAllQuotes() {
+  let quotes = ''
+  try {
+    const cursor = dbquotes.find({})
 
-        quotes = (await cursor.toArray())
-          .reduce((quotes,quoteObj)=>quotes.concat(`${quoteObj.text} - ${quoteObj.author}`,'\n'),'\n')
-      
-    }catch(error){
-      quotes = error.toString()
-    } finally {
-      await DBclient.close()
-    }
-    return quotes
+    /**
+     * @type {{ text: any; author: any; }[]} quoteObj
+     */
+    const quotesdocs = await cursor.toArray()
+    quotes = quotesdocs.reduce(
+      (quotes, quoteObj) =>
+        quotes.concat(`${quoteObj.text} - ${quoteObj.author}`, '\n'),
+      '\n'
+    )
+  } catch (error) {
+    quotes = error.toString()
+  }
+  return quotes
 }
 
-export async function addQuote(authorIn,textIn){
-    const DBclient = new MongoClient(uri,{ useUnifiedTopology: true })
-    let status = ''
-    try {
-      await DBclient.connect();
-      const database = DBclient.db(process.env.DB_NAME)
-      const collection = database.collection('quotes')
-      await collection.insertOne({author: authorIn,text: textIn})
-        
-      status = 'The quote has been added 🙂' 
-    }catch(error){
-      status = error.toString()
-    } finally {
-      await DBclient.close()
-    }
-    return status
-}
-
-export async function addPlayList(icon,playlistName){
-  const DBclient = new MongoClient(uri,{ useUnifiedTopology: true })
+/**
+ * @param {string} author
+ * @param {string} text
+ */
+export async function addQuote(author, text) {
+  console.log(author, text)
   let status = ''
   try {
-    await DBclient.connect();
-    const database = DBclient.db(process.env.DB_NAME)
-    const collection = database.collection('playlists')
-    await collection.insertOne({icon: icon, name: playlistName,songs: []})
-      
-    status = 'The playlist has been created 🙂' 
-  }catch(error){
+    await dbquotes.insertOne({ author, text })
+    status = 'The quote has been added 🙂'
+  } catch (error) {
     status = error.toString()
-  } finally {
-    await DBclient.close()
   }
   return status
 }
 
-export async function addSongToPlayList(playlistName,songName,ytbLink){
-  const DBclient = new MongoClient(uri,{ useUnifiedTopology: true })
+/**
+ * @param {string} icon
+ * @param {string} playlistName
+ */
+export async function addPlayList(icon, playlistName) {
   let status = ''
   try {
-    await DBclient.connect();
-    const database = DBclient.db(process.env.DB_NAME)
-    const collection = database.collection('playlists')
-    const playlist = await collection.findOne({name:playlistName})
-    if(playlist){
-      if(playlist.songs.find(x=>x.name===songName)){
+    await dbplaylists.insertOne({ icon: icon, name: playlistName, songs: [] })
+    status = 'The playlist has been created 🙂'
+  } catch (error) {
+    status = error.toString()
+  }
+  return status
+}
+
+/**
+ * @param {string} playlistName
+ * @param {string} songName
+ * @param {string} ytbLink
+ */
+export async function addSongToPlayList(playlistName, songName, ytbLink) {
+  let status = ''
+  try {
+    /**
+     * @type {{name: string, icon: string, songs:{name: string, ytbLink: string}[]}}
+     */
+    const playlist = await dbplaylists.findOne({ name: playlistName })
+    if (playlist) {
+      if (playlist.songs.find((x) => x.name === songName)) {
         status = 'The song is already in the playlist 🙂'
+      } else {
+        await dbplaylists.updateOne(
+          { name: playlistName },
+          { $push: { songs: { name: songName, ytbLink: ytbLink } } }
+        )
+        status = 'The song has been added to the playlist 🙂'
       }
-      else{
-        await collection.updateOne({name:playlistName},{$push:{songs:{name:songName,ytbLink:ytbLink}}})
-        status = 'The song has been added to the playlist 🙂' 
-      }
+    } else {
+      status = "The playlist doesn't exist 🙁"
     }
-    else{
-      status = 'The playlist doesn\'t exist 🙁'
-    }
-  }catch(error){
+  } catch (error) {
     status = error.toString()
   } finally {
     await DBclient.close()
@@ -109,34 +112,33 @@ export async function addSongToPlayList(playlistName,songName,ytbLink){
   return status
 }
 
-export async function getAllPlaylists(){
-  const DBclient = new MongoClient(uri,{ useUnifiedTopology: true })
+export async function getAllPlaylists() {
   let playlists = ''
   try {
-    await DBclient.connect()
-    const database = DBclient.db(process.env.DB_NAME)
-    const collection = database.collection('playlists')
-    const cursor = collection.find({})
+    const cursor = dbplaylists.find({})
 
-    playlists = (await cursor.toArray()).map(({name,icon,songs})=>`\n${icon} ${name}\n${songs.map(({name})=>`\u2001➤ ${name}`).join('\n')}`).join('\n')
-  }catch(error){
+    playlists = (await cursor.toArray())
+      .map(
+        ({ name, icon, songs }) =>
+          `\n${icon} ${name}\n${songs
+            .map(({ name }) => `\u2001➤ ${name}`)
+            .join('\n')}`
+      )
+      .join('\n')
+  } catch (error) {
     playlists = error.toString()
-  } finally {
-    await DBclient.close()
   }
   return playlists
 }
 
-export async function getPlaylist(playlistName){
-  const DBclient = new MongoClient(uri,{ useUnifiedTopology: true })
+/**
+ * @param {string} playlistName
+ */
+export async function getPlaylist(playlistName) {
   let playlist
   try {
-    await DBclient.connect()
-    const database = DBclient.db(process.env.DB_NAME)
-    const collection = database.collection('playlists')
-    playlist = await collection.findOne({name: playlistName})
-
-  }catch(error){
+    playlist = await dbplaylists.findOne({ name: playlistName })
+  } catch (error) {
     playlist = error.toString()
   } finally {
     await DBclient.close()
@@ -144,17 +146,19 @@ export async function getPlaylist(playlistName){
   return playlist
 }
 
-export async function renamePlaylist(playlistName,newPlayListName){
-  const DBclient = new MongoClient(uri,{ useUnifiedTopology: true })
+/**
+ * @param {string} playlistName
+ * @param {string} newPlayListName
+ */
+export async function renamePlaylist(playlistName, newPlayListName) {
   let status
   try {
-    await DBclient.connect()
-    const database = DBclient.db(process.env.DB_NAME)
-    const collection = database.collection('playlists')
-    await collection.updateOne({name:playlistName},{$set:{name: newPlayListName}})
-    status= 'The playlist was renamed 🙂'
-
-  }catch(error){
+    await dbplaylists.updateOne(
+      { name: playlistName },
+      { $set: { name: newPlayListName } }
+    )
+    status = 'The playlist was renamed 🙂'
+  } catch (error) {
     status = error.toString()
   } finally {
     await DBclient.close()
