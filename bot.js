@@ -1,8 +1,8 @@
 //@ts-check
 'use strict'
 
-import executeInteraction from './interaction.js'
-import executeCommand from './command.js'
+import executeInteraction from './src/interaction.js'
+import executeCommand from './src/command.js'
 
 import dotenv from 'dotenv'
 dotenv.config()
