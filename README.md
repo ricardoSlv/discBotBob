@@ -1,2 +1,2 @@
 # discordBobBot
-Discord bot that mimics a church bell and stuff
+Discord bot that mimics a church bell says some stuff and plays music
