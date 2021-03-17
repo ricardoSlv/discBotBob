@@ -8,7 +8,6 @@ const { MongoClient } = mongodb
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PWD}@discbotdb.ildnc.mongodb.net?retryWrites=true&w=majority`
 
 const DBclient = new MongoClient(uri, { useUnifiedTopology: true })
-
 let dbquotes
 let dbplaylists
 DBclient.connect().then(() => {
@@ -20,6 +19,7 @@ DBclient.connect().then(() => {
 export async function getRandomQuote() {
   let quote = ''
   try {
+    DBclient.connect()
     const quoteObj = await dbquotes.aggregate([{ $sample: { size: 1 } }]).next()
     quote = `${quoteObj.text} - ${quoteObj.author}`
   } catch (error) {
@@ -29,6 +29,7 @@ export async function getRandomQuote() {
 }
 
 export async function getAllQuotes() {
+  DBclient.connect()
   let quotes = ''
   try {
     const cursor = dbquotes.find({})
@@ -52,6 +53,7 @@ export async function getAllQuotes() {
  * @param {string} text
  */
 export async function addQuote(author, text) {
+  DBclient.connect()
   console.log(author, text)
   let status = ''
   try {
@@ -68,6 +70,7 @@ export async function addQuote(author, text) {
  * @param {string} playlistName
  */
 export async function addPlayList(icon, playlistName) {
+  DBclient.connect()
   let status = ''
   try {
     await dbplaylists.insertOne({ icon: icon, name: playlistName, songs: [] })
@@ -84,6 +87,7 @@ export async function addPlayList(icon, playlistName) {
  * @param {string} ytbLink
  */
 export async function addSongToPlayList(playlistName, songName, ytbLink) {
+  DBclient.connect()
   let status = ''
   try {
     /**
@@ -112,6 +116,7 @@ export async function addSongToPlayList(playlistName, songName, ytbLink) {
 }
 
 export async function getAllPlaylists() {
+  DBclient.connect()
   let playlists = ''
   try {
     const cursor = dbplaylists.find({})
