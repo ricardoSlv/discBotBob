@@ -71,10 +71,10 @@ export default async function (message) {
       {
         const [playlistName] = args
         const playlist = await getPlaylist(playlistName)
-        if (playlist) {
+        if (playlist && playlist?.songs?.length) {
           message.reply(`Playing ${playlist.name}`)
           playPlaylist(voiceChannel, playlist.songs)
-        } else console.log('Database is being a bitch, try again later')
+        } else message.reply('Database is being a bitch, try again later')
       }
       break
     case 'bppls':

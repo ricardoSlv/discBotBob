@@ -14,7 +14,7 @@ client.on('ready', () => {
   console.log(`${client.user.username} has logged in`)
 })
 
-client.on('message', async (message) => {
+client.on('message', (message) => {
   if (message.author.bot === true) return
 
   console.log(`${message.author.tag} said: ${message.content}`)
