@@ -7,6 +7,7 @@ import {
   getAllPlaylists,
   addPlayList,
   addSongToPlayList,
+  removeSongFromPlayList,
   getPlaylist,
   renamePlaylist,
 } from './db.js'
@@ -58,6 +59,12 @@ export default async function (message) {
       {
         const [playlist, songName, ytbLink] = args
         message.reply(await addSongToPlayList(playlist, songName, ytbLink))
+      }
+      break
+    case 'brspl':
+      {
+        const [playlist, songName] = args
+        message.reply(await removeSongFromPlayList(playlist, songName))
       }
       break
     case 'blpl':

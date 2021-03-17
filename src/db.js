@@ -19,7 +19,6 @@ DBclient.connect().then(() => {
 export async function getRandomQuote() {
   let quote = ''
   try {
-    DBclient.connect()
     const quoteObj = await dbquotes.aggregate([{ $sample: { size: 1 } }]).next()
     quote = `${quoteObj.text} - ${quoteObj.author}`
   } catch (error) {
@@ -29,7 +28,6 @@ export async function getRandomQuote() {
 }
 
 export async function getAllQuotes() {
-  DBclient.connect()
   let quotes = ''
   try {
     const cursor = dbquotes.find({})
@@ -53,7 +51,6 @@ export async function getAllQuotes() {
  * @param {string} text
  */
 export async function addQuote(author, text) {
-  DBclient.connect()
   console.log(author, text)
   let status = ''
   try {
@@ -70,7 +67,6 @@ export async function addQuote(author, text) {
  * @param {string} playlistName
  */
 export async function addPlayList(icon, playlistName) {
-  DBclient.connect()
   let status = ''
   try {
     await dbplaylists.insertOne({ icon: icon, name: playlistName, songs: [] })
@@ -87,7 +83,6 @@ export async function addPlayList(icon, playlistName) {
  * @param {string} ytbLink
  */
 export async function addSongToPlayList(playlistName, songName, ytbLink) {
-  DBclient.connect()
   let status = ''
   try {
     /**
@@ -109,14 +104,42 @@ export async function addSongToPlayList(playlistName, songName, ytbLink) {
     }
   } catch (error) {
     status = error.toString()
-  } finally {
-    await DBclient.close()
+  }
+  return status
+}
+
+/**
+ * @param {string} playlistName
+ * @param {string} songName
+ */
+export async function removeSongFromPlayList(playlistName, songName) {
+  let status = ''
+  try {
+    /**
+     * @type {{name: string, icon: string, songs:{name: string, ytbLink: string}[]}}
+     */
+    const playlist = await dbplaylists.findOne({ name: playlistName })
+    console.log(`playlistName`, playlistName)
+    if (playlist) {
+      if (!playlist.songs.find((x) => x.name === songName)) {
+        status = 'This song does not exist in the playlist 😯'
+      } else {
+        await dbplaylists.updateOne(
+          { name: playlistName },
+          { $pull: { songs: { name: songName } } }
+        )
+        status = 'The song has been removed to the playlist 👀'
+      }
+    } else {
+      status = "The playlist doesn't exist 🙁"
+    }
+  } catch (error) {
+    status = error.toString()
   }
   return status
 }
 
 export async function getAllPlaylists() {
-  DBclient.connect()
   let playlists = ''
   try {
     const cursor = dbplaylists.find({})
@@ -142,9 +165,8 @@ export async function getPlaylist(playlistName) {
     playlist = await dbplaylists.findOne({ name: playlistName })
   } catch (error) {
     playlist = error.toString()
-  } finally {
-    await DBclient.close()
   }
+  console.log(`playlist`, playlist)
   return playlist
 }
 
@@ -159,8 +181,6 @@ export async function renamePlaylist(playlistName, newPlayListName) {
     status = 'The playlist was renamed 🙂'
   } catch (error) {
     status = error.toString()
-  } finally {
-    await DBclient.close()
   }
   return status
 }

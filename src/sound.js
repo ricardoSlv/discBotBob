@@ -4,6 +4,8 @@ import ytdl from 'ytdl-core'
 import cron from 'node-cron'
 const { schedule } = cron
 
+// import { VoiceConnection } from 'discord.js'
+
 export const soundMap = new Map([
   ['gong', 'https://www.youtube.com/watch?v=r7oAsDWy6n4'],
   ['chingchong', 'https://www.youtube.com/watch?v=8yKG9VncnBI'],
@@ -89,6 +91,7 @@ export async function playYoutube(channel, link) {
  * @param {VoiceChannel} channel
  * @param {{name: string, ytbLink: string}[]} songs
  * @param {boolean} [shuffle]
+ //  * @param {VoiceConnection} [connection]
  * @param {any} [connection]
  */
 export async function playPlaylist(channel, songs, shuffle, connection) {
@@ -109,5 +112,10 @@ export async function playPlaylist(channel, songs, shuffle, connection) {
           playPlaylist(channel, nextSongs, shuffle, connection)
         }, 500)
       )
+      .on('error', () => {
+        setTimeout(() => {
+          channel.leave()
+        }, 500)
+      })
   }
 }

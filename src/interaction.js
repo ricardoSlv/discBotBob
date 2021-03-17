@@ -35,9 +35,7 @@ export default function (message) {
         )
       } else {
         status.clockChannels = [textChannel, voiceChannel]
-        textChannel.send(
-          `Starting the clock 🕒 on Text: ${textChannel} and Voice: ${voiceChannel}`
-        )
+        textChannel.send(`Starting the clock 🕒 on Text: ${textChannel} and Voice: ${voiceChannel}`)
         status.clockNotice = true
         status.hourNotice = hourNotice(textChannel, voiceChannel)
         status.halfHourNotice = halfHourNotice(textChannel, voiceChannel)
@@ -78,6 +76,7 @@ export default function (message) {
         \u2001➤ bapl + Icon - PlaylistName (Add playlist. Ex:"bapl 🐵 - monkeySongs") 
         \u2001➤ baspl + PlaylistName - SongName - YoutubeLink (Add song to playlist. Ex:"baspl monkeySongs - song1 - https://youtube.com/monkeysong ")
         \u2001➤ bupln + PlaylistName - NewPlaylistName (Update Playlist Name)
+        \u2001➤ brspl + PlaylistName - SongName (Remove Song from Playlist)
         \u2001➤ blpl (List playlists) 
         \u2001➤ bppls + PlaylistName (Play Playlist Shuffled)
         \u2001➤ bppl + PlaylistName (Play Playlist) `.replace(/   +/g, '')
