@@ -27,8 +27,7 @@ export default async function (message) {
 
   switch (command) {
     case 'bp':
-      if (voiceChannel && soundMap.get(args[0]))
-        playYoutube(voiceChannel, soundMap.get(args[0]))
+      if (voiceChannel && soundMap.get(args[0])) playYoutube(voiceChannel, soundMap.get(args[0]))
       else message.reply('You need to join a voice channel first!')
       break
     case 'baq':
@@ -71,10 +70,13 @@ export default async function (message) {
       {
         const [playlistName] = args
         const playlist = await getPlaylist(playlistName)
-        if (playlist && playlist?.songs?.length) {
+        if (playlist?.songs?.length) {
           message.reply(`Playing ${playlist.name}`)
           playPlaylist(voiceChannel, playlist.songs)
-        } else message.reply('Database is being a bitch, try again later')
+        } else {
+          console.log(playlist)
+          message.reply('Database is being a bitch, try again later')
+        }
       }
       break
     case 'bppls':

@@ -38,8 +38,7 @@ export async function getAllQuotes() {
      */
     const quotesdocs = await cursor.toArray()
     quotes = quotesdocs.reduce(
-      (quotes, quoteObj) =>
-        quotes.concat(`${quoteObj.text} - ${quoteObj.author}`, '\n'),
+      (quotes, quoteObj) => quotes.concat(`${quoteObj.text} - ${quoteObj.author}`, '\n'),
       '\n'
     )
   } catch (error) {
@@ -120,9 +119,7 @@ export async function getAllPlaylists() {
     playlists = (await cursor.toArray())
       .map(
         ({ name, icon, songs }) =>
-          `\n${icon} ${name}\n${songs
-            .map(({ name }) => `\u2001➤ ${name}`)
-            .join('\n')}`
+          `\n${icon} ${name}\n${songs.map(({ name }) => `\u2001➤ ${name}`).join('\n')}`
       )
       .join('\n')
   } catch (error) {
@@ -153,10 +150,7 @@ export async function getPlaylist(playlistName) {
 export async function renamePlaylist(playlistName, newPlayListName) {
   let status
   try {
-    await dbplaylists.updateOne(
-      { name: playlistName },
-      { $set: { name: newPlayListName } }
-    )
+    await dbplaylists.updateOne({ name: playlistName }, { $set: { name: newPlayListName } })
     status = 'The playlist was renamed 🙂'
   } catch (error) {
     status = error.toString()
