@@ -12,7 +12,7 @@ import {
   renamePlaylist,
 } from './db.js'
 
-import { soundMap, playYoutube, playPlaylist } from './sound.js'
+import { soundMap, playYoutube, playPlaylist, playYtbLink } from './sound.js'
 
 import { Message } from 'discord.js'
 
@@ -99,6 +99,13 @@ export default async function (message) {
       {
         const [oldplaylistName, newPlaylistName] = args
         message.reply(await renamePlaylist(oldplaylistName, newPlaylistName))
+      }
+      break
+    case 'bpyl':
+      {
+        const [ytblink] = args
+        await playYtbLink(voiceChannel, ytblink)
+        message.reply(`Playing YtbLink`)
       }
       break
   }

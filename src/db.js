@@ -30,12 +30,11 @@ export async function getRandomQuote() {
 export async function getAllQuotes() {
   let quotes = ''
   try {
-    const cursor = dbquotes.find({})
-
     /**
      * @type {{ text: any; author: any; }[]} quoteObj
      */
-    const quotesdocs = await cursor.toArray()
+    const quotesdocs = await dbquotes.find({}).toArray()
+
     quotes = quotesdocs.reduce(
       (quotes, quoteObj) => quotes.concat(`${quoteObj.text} - ${quoteObj.author}`, '\n'),
       '\n'
@@ -51,7 +50,6 @@ export async function getAllQuotes() {
  * @param {string} text
  */
 export async function addQuote(author, text) {
-  console.log(author, text)
   let status = ''
   try {
     await dbquotes.insertOne({ author, text })
@@ -119,7 +117,6 @@ export async function removeSongFromPlayList(playlistName, songName) {
      * @type {{name: string, icon: string, songs:{name: string, ytbLink: string}[]}}
      */
     const playlist = await dbplaylists.findOne({ name: playlistName })
-    console.log(`playlistName`, playlistName)
     if (playlist) {
       if (!playlist.songs.find((x) => x.name === songName)) {
         status = 'This song does not exist in the playlist 😯'
@@ -166,7 +163,6 @@ export async function getPlaylist(playlistName) {
   } catch (error) {
     playlist = error.toString()
   }
-  console.log(`playlist`, playlist)
   return playlist
 }
 

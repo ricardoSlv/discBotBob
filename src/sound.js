@@ -119,3 +119,24 @@ export async function playPlaylist(channel, songs, shuffle, connection) {
       })
   }
 }
+
+/**
+ * @param {VoiceChannel} channel
+ * @param {string} [ytblink]
+ */
+export async function playYtbLink(channel, ytblink) {
+  const connection = await channel.join()
+
+  connection
+    .play(ytdl(ytblink, { filter: 'audioonly' }))
+    .on('finish', () =>
+      setTimeout(() => {
+        channel.leave()
+      }, 500)
+    )
+    .on('error', () => {
+      setTimeout(() => {
+        channel.leave()
+      }, 500)
+    })
+}
