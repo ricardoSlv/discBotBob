@@ -79,6 +79,7 @@ export default function (message) {
         \u2001➤ brspl + PlaylistName - SongName (Remove Song from Playlist)
         \u2001➤ blpl (List playlists) 
         \u2001➤ bppls + PlaylistName (Play Playlist Shuffled)
+        \u2001➤ bpyl + YtbLink (Play Youtube Link) 
         \u2001➤ bppl + PlaylistName (Play Playlist) `.replace(/   +/g, '')
       )
   }
