@@ -1,21 +1,20 @@
-//@ts-check
+import { DMChannel, Message, NewsChannel, TextChannel, VoiceChannel } from 'discord.js'
+import { ScheduledTask } from 'node-cron'
 
 import { soundMap, hourNotice, halfHourNotice } from './sound.js'
 
 const status = {
   clockNotice: false,
-  clockChannels: [null, null],
-  hourNotice: null,
-  halfHourNotice: null,
+  clockChannels: [null, null] as [
+    TextChannel | DMChannel | NewsChannel | null,
+    VoiceChannel | null
+  ],
+  hourNotice: null as ScheduledTask | null,
+  halfHourNotice: null as ScheduledTask | null
 }
 
-import { Message } from 'discord.js'
-
-/**
- * @param {Message} message
- */
-export default function (message) {
-  const voiceChannel = message.member.voice.channel
+export default function (message: Message) {
+  const voiceChannel = message?.member?.voice.channel
   const textChannel = message.channel
 
   switch (message.content) {
@@ -33,7 +32,7 @@ export default function (message) {
         message.reply(
           `There's already a clock 🕒 running on Text: ${status.clockChannels[0]} and Voice: ${status.clockChannels[1]}`
         )
-      } else {
+      } else if (voiceChannel) {
         status.clockChannels = [textChannel, voiceChannel]
         textChannel.send(`Starting the clock 🕒 on Text: ${textChannel} and Voice: ${voiceChannel}`)
         status.clockNotice = true
@@ -47,12 +46,12 @@ export default function (message) {
       } else {
         textChannel.send('Die clock 🕒')
         status.clockNotice = false
-        status.hourNotice.destroy()
-        status.halfHourNotice.destroy()
+        status.hourNotice?.stop()
+        status.halfHourNotice?.stop()
       }
       break
     case 'bob help':
-      const sounds = [...soundMap.keys()].join(', ')
+      const sounds = [...Object.keys(soundMap)].join(', ')
       message.reply(
         `Available commands: 
         👄 Speech:
@@ -70,7 +69,7 @@ export default function (message) {
         📝 Quotes: 
         \u2001➤ baq + Quote - Author (Add quote) 
         \u2001➤ brq (Random Quote) 
-        ‎‎‎‎‎‎‎‎‎‎‎‎‎‎\u2001➤ blq (List Quotes)
+        \u2001➤ blq (List Quotes)
         
         🎵 Playlists
         \u2001➤ bapl + Icon - PlaylistName (Add playlist. Ex:"bapl 🐵 - monkeySongs") 
@@ -79,8 +78,8 @@ export default function (message) {
         \u2001➤ brspl + PlaylistName - SongName (Remove Song from Playlist)
         \u2001➤ blpl (List playlists) 
         \u2001➤ bppls + PlaylistName (Play Playlist Shuffled)
-        \u2001➤ bpyl + YtbLink (Play Youtube Link) 
-        \u2001➤ bppl + PlaylistName (Play Playlist) `.replace(/   +/g, '')
+        \u2001➤ bppl + PlaylistName (Play Playlist)
+        \u2001➤ bpyl + YtbLink (Play Youtube Link)`.replace(/   +/g, '')
       )
   }
 }

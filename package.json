@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "nodemon bot.js",
     "start": "node bot.js",
+    "tsc": "tsc bot.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -34,9 +35,12 @@
     "mongoose": "^5.12.0",
     "node-cron": "^2.0.3",
     "opusscript": "0.0.7",
-    "ytdl": "^1.4.1"
+    "typescript": "^5.0.2",
+    "ytdl": "^1.4.1",
+    "ytdl-core": "^4.11.2"
   },
   "devDependencies": {
+    "@types/node-cron": "^3.0.7",
     "nodemon": "^2.0.7"
   }
 }

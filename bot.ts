@@ -1,6 +1,3 @@
-//@ts-check
-'use strict'
-
 import executeInteraction from './src/interaction.js'
 import executeCommand from './src/command.js'
 
@@ -11,7 +8,7 @@ import { Client } from 'discord.js'
 const client = new Client()
 
 client.on('ready', () => {
-  console.log(`${client.user.username} has logged in`)
+  console.log(`${client?.user?.username} has logged in`)
 })
 
 client.on('message', (message) => {
