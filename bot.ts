@@ -1,5 +1,5 @@
-import executeInteraction from './src/interaction.js'
-import executeCommand from './src/command.js'
+import executeInteraction from './src/interaction'
+import executeCommand from './src/command'
 
 import dotenv from 'dotenv'
 dotenv.config()

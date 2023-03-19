@@ -8,9 +8,9 @@ import {
   removeSongFromPlayList,
   getPlaylist,
   renamePlaylist
-} from './db.js'
+} from './db'
 
-import { soundMap, playYoutube, playPlaylist, playYtbLink, isValidSound } from './sound.js'
+import { soundMap, playYoutube, playPlaylist, playYtbLink, isValidSound } from './sound'
 
 import { Message } from 'discord.js'
 

@@ -1,7 +1,7 @@
 import { DMChannel, Message, NewsChannel, TextChannel, VoiceChannel } from 'discord.js'
 import { ScheduledTask } from 'node-cron'
 
-import { soundMap, hourNotice, halfHourNotice } from './sound.js'
+import { soundMap, hourNotice, halfHourNotice } from './sound'
 
 const status = {
   clockNotice: false,

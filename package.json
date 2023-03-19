@@ -4,9 +4,9 @@
   "description": "A discord bot that does executes various commands",
   "main": "bot.js",
   "scripts": {
-    "dev": "nodemon bot.js",
+    "dev": "npx nodemon",
     "start": "node bot.js",
-    "tsc": "tsc bot.ts",
+    "tsc": "tsc bot.ts --outDir dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -26,7 +26,6 @@
     "url": "https://github.com/ricardoSlv/discordBell/issues"
   },
   "homepage": "https://github.com/ricardoSlv/discordBell#readme",
-  "type": "module",
   "dependencies": {
     "discord.js": "^12.5.1",
     "dotenv": "^8.2.0",
@@ -40,7 +39,9 @@
     "ytdl-core": "^4.11.2"
   },
   "devDependencies": {
+    "@types/node": "^18.15.3",
     "@types/node-cron": "^3.0.7",
-    "nodemon": "^2.0.7"
+    "nodemon": "^2.0.7",
+    "ts-node": "^10.9.1"
   }
 }
