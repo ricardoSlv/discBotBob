@@ -52,9 +52,13 @@ export default async function (message: Message) {
           {
             const [playlistName] = args
             const playlist = await getPlaylist(playlistName)
-            message.reply(`Playing ${playlist.name}`)
-            const shuffle = true
-            playPlaylist(voiceChannel, playlist.songs, shuffle)
+            if (playlist) {
+              message.reply(`Playing ${playlist.name}`)
+              const shuffle = true
+              playPlaylist(voiceChannel, playlist.songs, shuffle)
+            } else {
+              message.reply(`Couldn't find the playlist, fuck you 🫵🏻`)
+            }
           }
           break
         case 'bpyl':
@@ -77,13 +81,21 @@ export default async function (message: Message) {
       case 'brq':
         {
           const quote = await getRandomQuote()
-          message.reply(quote)
+          if (quote) {
+            message.reply(quote)
+          } else {
+            message.reply(`Couldn't find the quote, fuck you 🫵🏻`)
+          }
         }
         break
       case 'blq':
         {
           const quotes = await getAllQuotes()
-          message.reply(quotes)
+          if (quotes) {
+            message.reply(quotes)
+          } else {
+            message.reply(`I stray cat 🐈 stole the list of quotes from me, oh well 🤷🏻‍♂️`)
+          }
         }
         break
       case 'bapl':
@@ -107,7 +119,13 @@ export default async function (message: Message) {
       case 'blpl':
         {
           const playlists = await getAllPlaylists()
-          message.reply(playlists)
+          if (playlists) {
+            message.reply(playlists)
+          } else {
+            message.reply(
+              'The DJ in on strike and refused to hand me the list of playslist, asshole 😤'
+            )
+          }
         }
         break
       case 'bupln':

@@ -1,11 +1,11 @@
-import executeInteraction from './src/interaction'
-import executeCommand from './src/command'
-
 import dotenv from 'dotenv'
 dotenv.config()
-import { Client } from 'discord.js'
 
+import { Client } from 'discord.js'
 const client = new Client()
+
+import executeInteraction from './src/interaction'
+import executeCommand from './src/command'
 
 client.on('ready', () => {
   console.log(`${client?.user?.username} has logged in`)

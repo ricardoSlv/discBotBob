@@ -1,6 +1,5 @@
 import ytdl from 'ytdl-core'
-import cron from 'node-cron'
-const { schedule } = cron
+import { schedule } from 'node-cron'
 
 const sounds = ['gong', 'chingchong', 'bruh', 'die', 'bell', 'belldie', 'pocoto'] as const
 
