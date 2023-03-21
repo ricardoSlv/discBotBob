@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "npx nodemon",
     "start": "node bot.js",
-    "tsc": "tsc bot.ts --outDir dist",
+    "build": "tsc bot.ts --outDir dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

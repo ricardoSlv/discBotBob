@@ -2,20 +2,21 @@ import ytdl from 'ytdl-core'
 import cron from 'node-cron'
 const { schedule } = cron
 
-const sounds = ['gong', 'chingchong', 'bruh', 'die', 'bell', 'belldie'] as const
+const sounds = ['gong', 'chingchong', 'bruh', 'die', 'bell', 'belldie', 'pocoto'] as const
 
 export function isValidSound(value: string): value is typeof sounds[number] {
   return sounds.includes(value as typeof sounds[number])
 }
 
-export const soundMap = {
+export const soundMap: Record<typeof sounds[number], string> = {
   gong: 'https://www.youtube.com/watch?v=r7oAsDWy6n4',
   chingchong: 'https://www.youtube.com/watch?v=8yKG9VncnBI',
   bruh: 'https://www.youtube.com/watch?v=2ZIpFytCSVc',
   die: 'https://www.youtube.com/watch?v=PtcHNvVooLQ',
   bell: 'https://www.youtube.com/watch?v=dNl4-w9ZrBs',
-  belldie: 'https://www.youtube.com/watch?v=zDBrQWq82-Q'
-} satisfies Record<typeof sounds[number], string>
+  belldie: 'https://www.youtube.com/watch?v=zDBrQWq82-Q',
+  pocoto: 'https://www.youtube.com/shorts/NeNN1nDv_Bc'
+}
 
 import { VoiceChannel, TextChannel, DMChannel, NewsChannel, VoiceConnection } from 'discord.js'
 

@@ -36,8 +36,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var db_js_1 = require("./db.js");
-var sound_js_1 = require("./sound.js");
+var db_1 = require("./db");
+var sound_1 = require("./sound");
 function default_1(message) {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function () {
@@ -64,9 +64,9 @@ function default_1(message) {
                     return [3 /*break*/, 9];
                 case 2:
                     soundMapKey = args[0];
-                    if ((0, sound_js_1.isValidSound)(soundMapKey)) {
-                        soundYtbLink = sound_js_1.soundMap[soundMapKey];
-                        (0, sound_js_1.playYoutube)(voiceChannel, soundYtbLink);
+                    if ((0, sound_1.isValidSound)(soundMapKey)) {
+                        soundYtbLink = sound_1.soundMap[soundMapKey];
+                        (0, sound_1.playYoutube)(voiceChannel, soundYtbLink);
                     }
                     else {
                         message.reply('あなたが要求した音はありません 👲🏻');
@@ -74,12 +74,12 @@ function default_1(message) {
                     return [3 /*break*/, 9];
                 case 3:
                     playlistName = args[0];
-                    return [4 /*yield*/, (0, db_js_1.getPlaylist)(playlistName)];
+                    return [4 /*yield*/, (0, db_1.getPlaylist)(playlistName)];
                 case 4:
                     playlist = _q.sent();
                     if ((_b = playlist === null || playlist === void 0 ? void 0 : playlist.songs) === null || _b === void 0 ? void 0 : _b.length) {
                         message.reply("Playing ".concat(playlist.name));
-                        (0, sound_js_1.playPlaylist)(voiceChannel, playlist.songs);
+                        (0, sound_1.playPlaylist)(voiceChannel, playlist.songs);
                     }
                     else {
                         console.log(playlist);
@@ -88,16 +88,16 @@ function default_1(message) {
                     return [3 /*break*/, 9];
                 case 5:
                     playlistName = args[0];
-                    return [4 /*yield*/, (0, db_js_1.getPlaylist)(playlistName)];
+                    return [4 /*yield*/, (0, db_1.getPlaylist)(playlistName)];
                 case 6:
                     playlist = _q.sent();
                     message.reply("Playing ".concat(playlist.name));
                     shuffle = true;
-                    (0, sound_js_1.playPlaylist)(voiceChannel, playlist.songs, shuffle);
+                    (0, sound_1.playPlaylist)(voiceChannel, playlist.songs, shuffle);
                     return [3 /*break*/, 9];
                 case 7:
                     ytblink = args[0];
-                    return [4 /*yield*/, (0, sound_js_1.playYtbLink)(voiceChannel, ytblink)];
+                    return [4 /*yield*/, (0, sound_1.playYtbLink)(voiceChannel, ytblink)];
                 case 8:
                     _q.sent();
                     message.reply("Playing YtbLink");
@@ -119,16 +119,16 @@ function default_1(message) {
                 case 11:
                     text = args[0], author = args[1];
                     _f = (_e = message).reply;
-                    return [4 /*yield*/, (0, db_js_1.addQuote)(author, text)];
+                    return [4 /*yield*/, (0, db_1.addQuote)(author, text)];
                 case 12:
                     _f.apply(_e, [_q.sent()]);
                     return [3 /*break*/, 27];
-                case 13: return [4 /*yield*/, (0, db_js_1.getRandomQuote)()];
+                case 13: return [4 /*yield*/, (0, db_1.getRandomQuote)()];
                 case 14:
                     quote = _q.sent();
                     message.reply(quote);
                     return [3 /*break*/, 27];
-                case 15: return [4 /*yield*/, (0, db_js_1.getAllQuotes)()];
+                case 15: return [4 /*yield*/, (0, db_1.getAllQuotes)()];
                 case 16:
                     quotes = _q.sent();
                     message.reply(quotes);
@@ -136,25 +136,25 @@ function default_1(message) {
                 case 17:
                     icon = args[0], playlist = args[1];
                     _h = (_g = message).reply;
-                    return [4 /*yield*/, (0, db_js_1.addPlayList)(icon, playlist)];
+                    return [4 /*yield*/, (0, db_1.addPlayList)(icon, playlist)];
                 case 18:
                     _h.apply(_g, [_q.sent()]);
                     return [3 /*break*/, 27];
                 case 19:
                     playlist = args[0], songName = args[1], ytbLink = args[2];
                     _k = (_j = message).reply;
-                    return [4 /*yield*/, (0, db_js_1.addSongToPlayList)(playlist, songName, ytbLink)];
+                    return [4 /*yield*/, (0, db_1.addSongToPlayList)(playlist, songName, ytbLink)];
                 case 20:
                     _k.apply(_j, [_q.sent()]);
                     return [3 /*break*/, 27];
                 case 21:
                     playlist = args[0], songName = args[1];
                     _m = (_l = message).reply;
-                    return [4 /*yield*/, (0, db_js_1.removeSongFromPlayList)(playlist, songName)];
+                    return [4 /*yield*/, (0, db_1.removeSongFromPlayList)(playlist, songName)];
                 case 22:
                     _m.apply(_l, [_q.sent()]);
                     return [3 /*break*/, 27];
-                case 23: return [4 /*yield*/, (0, db_js_1.getAllPlaylists)()];
+                case 23: return [4 /*yield*/, (0, db_1.getAllPlaylists)()];
                 case 24:
                     playlists = _q.sent();
                     message.reply(playlists);
@@ -162,7 +162,7 @@ function default_1(message) {
                 case 25:
                     oldplaylistName = args[0], newPlaylistName = args[1];
                     _p = (_o = message).reply;
-                    return [4 /*yield*/, (0, db_js_1.renamePlaylist)(oldplaylistName, newPlaylistName)];
+                    return [4 /*yield*/, (0, db_1.renamePlaylist)(oldplaylistName, newPlaylistName)];
                 case 26:
                     _p.apply(_o, [_q.sent()]);
                     return [3 /*break*/, 27];

@@ -49,7 +49,7 @@ exports.playYtbLink = exports.playPlaylist = exports.playYoutube = exports.halfH
 var ytdl_core_1 = require("ytdl-core");
 var node_cron_1 = require("node-cron");
 var schedule = node_cron_1.default.schedule;
-var sounds = ['gong', 'chingchong', 'bruh', 'die', 'bell', 'belldie'];
+var sounds = ['gong', 'chingchong', 'bruh', 'die', 'bell', 'belldie', 'pocoto'];
 function isValidSound(value) {
     return sounds.includes(value);
 }
@@ -60,7 +60,8 @@ exports.soundMap = {
     bruh: 'https://www.youtube.com/watch?v=2ZIpFytCSVc',
     die: 'https://www.youtube.com/watch?v=PtcHNvVooLQ',
     bell: 'https://www.youtube.com/watch?v=dNl4-w9ZrBs',
-    belldie: 'https://www.youtube.com/watch?v=zDBrQWq82-Q'
+    belldie: 'https://www.youtube.com/watch?v=zDBrQWq82-Q',
+    pocoto: 'https://www.youtube.com/shorts/NeNN1nDv_Bc'
 };
 function playBell(channel, rings) {
     return __awaiter(this, void 0, void 0, function () {

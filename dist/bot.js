@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var interaction_js_1 = require("./src/interaction.js");
-var command_js_1 = require("./src/command.js");
+var interaction_1 = require("./src/interaction");
+var command_1 = require("./src/command");
 var dotenv_1 = require("dotenv");
 dotenv_1.default.config();
 var discord_js_1 = require("discord.js");
@@ -15,8 +15,8 @@ client.on('message', function (message) {
         return;
     console.log("".concat(message.author.tag, " said: ").concat(message.content));
     try {
-        (0, interaction_js_1.default)(message);
-        (0, command_js_1.default)(message);
+        (0, interaction_1.default)(message);
+        (0, command_1.default)(message);
     }
     catch (error) {
         message.reply("An error has occurred processing the message ".concat(error));

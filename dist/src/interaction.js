@@ -9,7 +9,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var sound_js_1 = require("./sound.js");
+var sound_1 = require("./sound");
 var status = {
     clockNotice: false,
     clockChannels: [null, null],
@@ -38,8 +38,8 @@ function default_1(message) {
                 status.clockChannels = [textChannel, voiceChannel];
                 textChannel.send("Starting the clock \uD83D\uDD52 on Text: ".concat(textChannel, " and Voice: ").concat(voiceChannel));
                 status.clockNotice = true;
-                status.hourNotice = (0, sound_js_1.hourNotice)(textChannel, voiceChannel);
-                status.halfHourNotice = (0, sound_js_1.halfHourNotice)(textChannel, voiceChannel);
+                status.hourNotice = (0, sound_1.hourNotice)(textChannel, voiceChannel);
+                status.halfHourNotice = (0, sound_1.halfHourNotice)(textChannel, voiceChannel);
             }
             break;
         case 'bob stop the clock':
@@ -54,7 +54,7 @@ function default_1(message) {
             }
             break;
         case 'bob help':
-            var sounds = __spreadArray([], Object.keys(sound_js_1.soundMap), true).join(', ');
+            var sounds = __spreadArray([], Object.keys(sound_1.soundMap), true).join(', ');
             message.reply("Available commands: \n        \uD83D\uDC44 Speech:\n        \u2001\u27A4 bob say hi \n        \u2001\u27A4 bob say the n word \n        \u2001\u27A4 bob ride the wave  \n        \n        \uD83D\uDD52 Clock: \n        \u2001\u27A4 bob start the clock  \n        \u2001\u27A4 bob stop the clock \n        \n        \uD83D\uDD0A Sounds: \n        \u2001\u27A4 bp + [".concat(sounds, "] \n        \n        \uD83D\uDCDD Quotes: \n        \u2001\u27A4 baq + Quote - Author (Add quote) \n        \u2001\u27A4 brq (Random Quote) \n        \u2001\u27A4 blq (List Quotes)\n        \n        \uD83C\uDFB5 Playlists\n        \u2001\u27A4 bapl + Icon - PlaylistName (Add playlist. Ex:\"bapl \uD83D\uDC35 - monkeySongs\") \n        \u2001\u27A4 baspl + PlaylistName - SongName - YoutubeLink (Add song to playlist. Ex:\"baspl monkeySongs - song1 - https://youtube.com/monkeysong \")\n        \u2001\u27A4 bupln + PlaylistName - NewPlaylistName (Update Playlist Name)\n        \u2001\u27A4 brspl + PlaylistName - SongName (Remove Song from Playlist)\n        \u2001\u27A4 blpl (List playlists) \n        \u2001\u27A4 bppls + PlaylistName (Play Playlist Shuffled)\n        \u2001\u27A4 bppl + PlaylistName (Play Playlist)\n        \u2001\u27A4 bpyl + YtbLink (Play Youtube Link)").replace(/   +/g, ''));
     }
 }

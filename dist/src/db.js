@@ -63,6 +63,7 @@ function getRandomQuote() {
                     return [4 /*yield*/, dbquotes.aggregate([{ $sample: { size: 1 } }]).next()];
                 case 2:
                     quoteObj = _a.sent();
+                    console.log('Quote:', quoteObj);
                     quote = "".concat(quoteObj.text, " - ").concat(quoteObj.author);
                     return [3 /*break*/, 4];
                 case 3:

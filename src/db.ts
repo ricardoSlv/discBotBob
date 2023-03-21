@@ -18,6 +18,7 @@ export async function getRandomQuote() {
   let quote = ''
   try {
     const quoteObj = await dbquotes.aggregate([{ $sample: { size: 1 } }]).next()
+    console.log('Quote:', quoteObj)
     quote = `${quoteObj.text} - ${quoteObj.author}`
   } catch (error) {
     quote = (error as Error).toString()
