@@ -10,7 +10,7 @@ import {
   renamePlaylist
 } from './db'
 
-import { soundMap, playYoutube, playPlaylist, playYtbLink, isValidSound } from './sound'
+import { soundMap, playPlaylist, playYtbLink, isValidSound } from './sound'
 
 import { Message } from 'discord.js'
 
@@ -30,7 +30,7 @@ export default async function (message: Message) {
           const [soundMapKey] = args
           if (isValidSound(soundMapKey)) {
             const soundYtbLink = soundMap[soundMapKey]
-            playYoutube(voiceChannel, soundYtbLink)
+            playYtbLink(voiceChannel, soundYtbLink)
           } else {
             message.reply('あなたが要求した音はありません 👲🏻')
           }

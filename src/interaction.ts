@@ -1,14 +1,18 @@
-import { DMChannel, Message, NewsChannel, TextChannel, VoiceChannel } from 'discord.js'
+import {
+  DMChannel,
+  Message,
+  NewsChannel,
+  TextBasedChannel,
+  TextChannel,
+  VoiceBasedChannel
+} from 'discord.js'
 import { ScheduledTask } from 'node-cron'
 
 import { soundMap, hourNotice, halfHourNotice } from './sound'
 
 const status = {
   clockNotice: false,
-  clockChannels: [null, null] as [
-    TextChannel | DMChannel | NewsChannel | null,
-    VoiceChannel | null
-  ],
+  clockChannels: [null, null] as [TextBasedChannel | null, VoiceBasedChannel | null],
   hourNotice: null as ScheduledTask | null,
   halfHourNotice: null as ScheduledTask | null
 }

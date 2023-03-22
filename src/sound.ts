@@ -17,29 +17,38 @@ export const soundMap: Record<typeof sounds[number], string> = {
   pocoto: 'https://www.youtube.com/shorts/NeNN1nDv_Bc'
 }
 
-import { VoiceChannel, TextChannel, DMChannel, NewsChannel, VoiceConnection } from 'discord.js'
+import { VoiceBasedChannel, TextBasedChannel } from 'discord.js'
+import {
+  AudioPlayerStatus,
+  createAudioPlayer,
+  createAudioResource,
+  joinVoiceChannel,
+  NoSubscriberBehavior,
+  VoiceConnection
+} from '@discordjs/voice'
 
-async function playBell(channel: VoiceChannel, rings: number) {
+async function playBell(channel: VoiceBasedChannel, rings: number) {
   if (rings === 0) {
     setTimeout(() => {
-      channel.leave()
+      //channel.leave()
     }, 500)
   } else {
-    const connection = await channel.join()
-    connection
-      .play(
-        ytdl('https://www.youtube.com/watch?v=dNl4-w9ZrBs', {
-          filter: 'audioonly'
-        })
-      )
-      .on('finish', () => playBell(channel, rings - 1))
+    const connection = joinVoiceChannel({
+      channelId: channel.id,
+      guildId: channel.guild.id,
+      adapterCreator: channel.guild.voiceAdapterCreator
+    })
+    // connection
+    //   .play(
+    //     ytdl('https://www.youtube.com/watch?v=dNl4-w9ZrBs', {
+    //       filter: 'audioonly'
+    //     })
+    //   )
+    //   .on('finish', () => playBell(channel, rings - 1))
   }
 }
 
-export function hourNotice(
-  channel: TextChannel | DMChannel | NewsChannel,
-  voiceChannel: VoiceChannel
-) {
+export function hourNotice(channel: TextBasedChannel, voiceChannel: VoiceBasedChannel) {
   return schedule('0 * * * *', () => {
     const currHour = new Date().toLocaleString('en-GB', {
       hour: '2-digit',
@@ -53,10 +62,7 @@ export function hourNotice(
   })
 }
 
-export function halfHourNotice(
-  channel: TextChannel | DMChannel | NewsChannel,
-  voiceChannel: VoiceChannel
-) {
+export function halfHourNotice(channel: TextBasedChannel, voiceChannel: VoiceBasedChannel) {
   return schedule('30 * * * *', () => {
     const currHour = new Date().toLocaleString('en-GB', {
       hour: '2-digit',
@@ -70,59 +76,65 @@ export function halfHourNotice(
   })
 }
 
-export async function playYoutube(channel: VoiceChannel, link: string) {
-  const connection = await channel.join()
-  connection.play(ytdl(link, { filter: 'audioonly' })).on('finish', () =>
-    setTimeout(() => {
-      channel.leave()
-    }, 500)
-  )
-}
-
 export async function playPlaylist(
-  channel: VoiceChannel,
+  channel: VoiceBasedChannel,
   songs: { name: string; ytbLink: string }[],
   shuffle?: boolean,
   connection?: VoiceConnection
 ) {
-  if (!connection) connection = await channel.join()
+  if (!connection)
+    connection = joinVoiceChannel({
+      channelId: channel.id,
+      guildId: channel.guild.id,
+      adapterCreator: channel.guild.voiceAdapterCreator
+    })
 
   if (songs.length === 0)
     setTimeout(() => {
-      channel.leave()
+      connection?.destroy()
     }, 500)
   else {
     const nextSong = shuffle ? Math.floor(Math.random() * songs.length) : 0
     let nextSongs = [...songs]
     nextSongs.splice(nextSong, 1)
-    connection
-      .play(ytdl(songs[nextSong].ytbLink, { filter: 'audioonly' }))
-      .on('finish', () =>
-        setTimeout(() => {
-          playPlaylist(channel, nextSongs, shuffle, connection)
-        }, 500)
-      )
-      .on('error', () => {
-        setTimeout(() => {
-          channel.leave()
-        }, 500)
-      })
+    // connection
+    //   .play(ytdl(songs[nextSong].ytbLink, { filter: 'audioonly' }))
+    //   .on('finish', () =>
+    //     setTimeout(() => {
+    //       playPlaylist(channel, nextSongs, shuffle, connection)
+    //     }, 500)
+    //   )
+    //   .on('error', () => {
+    //     setTimeout(() => {
+    //       connection?.destroy()
+    //     }, 500)
+    //   })
   }
 }
 
-export async function playYtbLink(channel: VoiceChannel, ytblink: string) {
-  const connection = await channel.join()
+export async function playYtbLink(channel: VoiceBasedChannel, ytblink: string) {
+  const connection = joinVoiceChannel({
+    channelId: channel.id,
+    guildId: channel.guild.id,
+    adapterCreator: channel.guild.voiceAdapterCreator
+  })
 
-  connection
-    .play(ytdl(ytblink, { filter: 'audioonly' }))
-    .on('finish', () =>
-      setTimeout(() => {
-        channel.leave()
-      }, 500)
-    )
-    .on('error', () => {
-      setTimeout(() => {
-        channel.leave()
-      }, 500)
-    })
+  const player = createAudioPlayer({
+    behaviors: {
+      noSubscriber: NoSubscriberBehavior.Pause
+    }
+  })
+
+  player.play(createAudioResource(ytdl(ytblink, { filter: 'audioonly' })))
+  connection.subscribe(player)
+  player.on(AudioPlayerStatus.Idle, () => {
+    setTimeout(() => {
+      connection.destroy()
+    }, 500)
+  })
+  player.on('error', () => {
+    setTimeout(() => {
+      connection.destroy()
+    }, 500)
+  })
 }

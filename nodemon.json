@@ -2,5 +2,5 @@
   "watch": ["src", "bot.ts"],
   "ext": ".ts,.js",
   "ignore": [],
-  "exec": "npx ts-node ./bot.ts"
+  "exec": "ts-node ./bot.ts"
 }

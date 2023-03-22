@@ -1,8 +1,15 @@
 import dotenv from 'dotenv'
 dotenv.config()
 
-import { Client } from 'discord.js'
-const client = new Client()
+import { Client, Events, GatewayIntentBits } from 'discord.js'
+const client = new Client({
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildVoiceStates,
+    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildMessages
+  ]
+})
 
 import executeInteraction from './src/interaction'
 import executeCommand from './src/command'
@@ -11,7 +18,7 @@ client.on('ready', () => {
   console.log(`${client?.user?.username} has logged in`)
 })
 
-client.on('message', (message) => {
+client.on(Events.MessageCreate, (message) => {
   if (message.author.bot === true) return
 
   console.log(`${message.author.tag} said: ${message.content}`)

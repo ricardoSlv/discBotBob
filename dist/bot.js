@@ -6,7 +6,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const discord_js_1 = require("discord.js");
-const client = new discord_js_1.Client();
+const client = new discord_js_1.Client({
+    intents: [discord_js_1.GatewayIntentBits.Guilds, discord_js_1.GatewayIntentBits.GuildVoiceStates]
+});
 const interaction_1 = __importDefault(require("./src/interaction"));
 const command_1 = __importDefault(require("./src/command"));
 client.on('ready', () => {
