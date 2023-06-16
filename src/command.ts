@@ -18,7 +18,7 @@ export default async function (message: Message) {
   const voiceChannel = message?.member?.voice.channel
   const msgTokens = message.content.split(/ +/)
   const [command, ...rest] = msgTokens
-  const args = rest.join(' ').split(/ *- */)
+  const args = rest.join(' ').split(/ +- +/)
 
   if (['bp', 'bppl', 'bppls', 'bpyl'].includes(command)) {
     if (!voiceChannel) {

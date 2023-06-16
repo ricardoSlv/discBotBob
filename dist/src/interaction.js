@@ -8,8 +8,7 @@ const status = {
     halfHourNotice: null
 };
 function default_1(message) {
-    var _a, _b, _c;
-    const voiceChannel = (_a = message === null || message === void 0 ? void 0 : message.member) === null || _a === void 0 ? void 0 : _a.voice.channel;
+    const voiceChannel = message?.member?.voice.channel;
     const textChannel = message.channel;
     switch (message.content) {
         case 'bob say hi':
@@ -40,8 +39,8 @@ function default_1(message) {
             else {
                 textChannel.send('Die clock 🕒');
                 status.clockNotice = false;
-                (_b = status.hourNotice) === null || _b === void 0 ? void 0 : _b.stop();
-                (_c = status.halfHourNotice) === null || _c === void 0 ? void 0 : _c.stop();
+                status.hourNotice?.stop();
+                status.halfHourNotice?.stop();
             }
             break;
         case 'bob help':

@@ -1,7 +1,7 @@
 import { MongoClient, Collection } from 'mongodb'
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PWD}@discbotdb.ildnc.mongodb.net?retryWrites=true&w=majority`
 
-const DBclient = new MongoClient(uri, { useUnifiedTopology: true })
+const DBclient = new MongoClient(uri)
 
 type Quote = { text: string; author: string }
 type Playlist = { name: string; icon: string; songs: { name: string; ytbLink: string }[] }

@@ -28,24 +28,42 @@ import {
 } from '@discordjs/voice'
 
 async function playBell(channel: VoiceBasedChannel, rings: number) {
-  if (rings === 0) {
+  const currRings = rings
+  const connection = joinVoiceChannel({
+    channelId: channel.id,
+    guildId: channel.guild.id,
+    adapterCreator: channel.guild.voiceAdapterCreator
+  })
+
+  const player = createAudioPlayer({
+    behaviors: {
+      noSubscriber: NoSubscriberBehavior.Pause
+    }
+  })
+
+  player.play(
+    createAudioResource(
+      ytdl('https://www.youtube.com/watch?v=dNl4-w9ZrBs', { filter: 'audioonly' })
+    )
+  )
+  connection.subscribe(player)
+
+  player.on(AudioPlayerStatus.Idle, () => {
+    if (rings === 0) {
+      setTimeout(() => {
+        connection.destroy()
+      }, 500)
+    } else {
+      setTimeout(() => {
+        connection.destroy()
+      }, 500)
+    }
+  })
+  player.on('error', () => {
     setTimeout(() => {
-      //channel.leave()
+      connection.destroy()
     }, 500)
-  } else {
-    const connection = joinVoiceChannel({
-      channelId: channel.id,
-      guildId: channel.guild.id,
-      adapterCreator: channel.guild.voiceAdapterCreator
-    })
-    // connection
-    //   .play(
-    //     ytdl('https://www.youtube.com/watch?v=dNl4-w9ZrBs', {
-    //       filter: 'audioonly'
-    //     })
-    //   )
-    //   .on('finish', () => playBell(channel, rings - 1))
-  }
+  })
 }
 
 export function hourNotice(channel: TextBasedChannel, voiceChannel: VoiceBasedChannel) {
@@ -128,13 +146,16 @@ export async function playYtbLink(channel: VoiceBasedChannel, ytblink: string) {
   player.play(createAudioResource(ytdl(ytblink, { filter: 'audioonly' })))
   connection.subscribe(player)
   player.on(AudioPlayerStatus.Idle, () => {
-    setTimeout(() => {
-      connection.destroy()
-    }, 500)
+    console.log('Player Idle: ', ytblink)
+    // setTimeout(() => {
+    //   // connection.destroy()
+    // }, 500)
   })
-  player.on('error', () => {
-    setTimeout(() => {
-      connection.destroy()
-    }, 500)
+  player.on('error', (e) => {
+    console.log('Player Error: ', ytblink)
+    console.error(e)
+    // setTimeout(() => {
+    //   // connection.destroy()
+    // }, 500)
   })
 }

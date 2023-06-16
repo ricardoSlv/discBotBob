@@ -1,18 +1,9 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.playYtbLink = exports.playPlaylist = exports.playYoutube = exports.halfHourNotice = exports.hourNotice = exports.soundMap = exports.isValidSound = void 0;
+exports.playYtbLink = exports.playPlaylist = exports.halfHourNotice = exports.hourNotice = exports.soundMap = exports.isValidSound = void 0;
 const ytdl_core_1 = __importDefault(require("ytdl-core"));
 const node_cron_1 = require("node-cron");
 const sounds = ['gong', 'chingchong', 'bruh', 'die', 'bell', 'belldie', 'pocoto'];
@@ -30,27 +21,36 @@ exports.soundMap = {
     pocoto: 'https://www.youtube.com/shorts/NeNN1nDv_Bc'
 };
 const voice_1 = require("@discordjs/voice");
-function playBell(channel, rings) {
-    return __awaiter(this, void 0, void 0, function* () {
+async function playBell(channel, rings) {
+    const currRings = rings;
+    const connection = (0, voice_1.joinVoiceChannel)({
+        channelId: channel.id,
+        guildId: channel.guild.id,
+        adapterCreator: channel.guild.voiceAdapterCreator
+    });
+    const player = (0, voice_1.createAudioPlayer)({
+        behaviors: {
+            noSubscriber: voice_1.NoSubscriberBehavior.Pause
+        }
+    });
+    player.play((0, voice_1.createAudioResource)((0, ytdl_core_1.default)('https://www.youtube.com/watch?v=dNl4-w9ZrBs', { filter: 'audioonly' })));
+    connection.subscribe(player);
+    player.on(voice_1.AudioPlayerStatus.Idle, () => {
         if (rings === 0) {
             setTimeout(() => {
-                //channel.leave()
+                connection.destroy();
             }, 500);
         }
         else {
-            const connection = (0, voice_1.joinVoiceChannel)({
-                channelId: channel.id,
-                guildId: channel.guild.id,
-                adapterCreator: channel.guild.voiceAdapterCreator
-            });
-            // connection
-            //   .play(
-            //     ytdl('https://www.youtube.com/watch?v=dNl4-w9ZrBs', {
-            //       filter: 'audioonly'
-            //     })
-            //   )
-            //   .on('finish', () => playBell(channel, rings - 1))
+            setTimeout(() => {
+                connection.destroy();
+            }, 500);
         }
+    });
+    player.on('error', () => {
+        setTimeout(() => {
+            connection.destroy();
+        }, 500);
     });
 }
 function hourNotice(channel, voiceChannel) {
@@ -81,77 +81,61 @@ function halfHourNotice(channel, voiceChannel) {
     });
 }
 exports.halfHourNotice = halfHourNotice;
-function playYoutube(channel, link) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const connection = (0, voice_1.joinVoiceChannel)({
+async function playPlaylist(channel, songs, shuffle, connection) {
+    if (!connection)
+        connection = (0, voice_1.joinVoiceChannel)({
             channelId: channel.id,
             guildId: channel.guild.id,
             adapterCreator: channel.guild.voiceAdapterCreator
         });
-        // connection.play(ytdl(link, { filter: 'audioonly' })).on('finish', () =>
-        //   setTimeout(() => {
-        //     channel.leave()
-        //   }, 500)
-        //)
-    });
-}
-exports.playYoutube = playYoutube;
-function playPlaylist(channel, songs, shuffle, connection) {
-    return __awaiter(this, void 0, void 0, function* () {
-        if (!connection)
-            connection = (0, voice_1.joinVoiceChannel)({
-                channelId: channel.id,
-                guildId: channel.guild.id,
-                adapterCreator: channel.guild.voiceAdapterCreator
-            });
-        if (songs.length === 0)
-            setTimeout(() => {
-                connection === null || connection === void 0 ? void 0 : connection.destroy();
-            }, 500);
-        else {
-            const nextSong = shuffle ? Math.floor(Math.random() * songs.length) : 0;
-            let nextSongs = [...songs];
-            nextSongs.splice(nextSong, 1);
-            // connection
-            //   .play(ytdl(songs[nextSong].ytbLink, { filter: 'audioonly' }))
-            //   .on('finish', () =>
-            //     setTimeout(() => {
-            //       playPlaylist(channel, nextSongs, shuffle, connection)
-            //     }, 500)
-            //   )
-            //   .on('error', () => {
-            //     setTimeout(() => {
-            //       connection?.destroy()
-            //     }, 500)
-            //   })
-        }
-    });
+    if (songs.length === 0)
+        setTimeout(() => {
+            connection?.destroy();
+        }, 500);
+    else {
+        const nextSong = shuffle ? Math.floor(Math.random() * songs.length) : 0;
+        let nextSongs = [...songs];
+        nextSongs.splice(nextSong, 1);
+        // connection
+        //   .play(ytdl(songs[nextSong].ytbLink, { filter: 'audioonly' }))
+        //   .on('finish', () =>
+        //     setTimeout(() => {
+        //       playPlaylist(channel, nextSongs, shuffle, connection)
+        //     }, 500)
+        //   )
+        //   .on('error', () => {
+        //     setTimeout(() => {
+        //       connection?.destroy()
+        //     }, 500)
+        //   })
+    }
 }
 exports.playPlaylist = playPlaylist;
-function playYtbLink(channel, ytblink) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const connection = (0, voice_1.joinVoiceChannel)({
-            channelId: channel.id,
-            guildId: channel.guild.id,
-            adapterCreator: channel.guild.voiceAdapterCreator
-        });
-        const player = (0, voice_1.createAudioPlayer)({
-            behaviors: {
-                noSubscriber: voice_1.NoSubscriberBehavior.Pause
-            }
-        });
-        connection.subscribe(player);
-        player.play((0, voice_1.createAudioResource)((0, ytdl_core_1.default)(ytblink, { filter: 'audioonly' })));
-        // .on('finish', () =>
-        //   setTimeout(() => {
-        //     connection.destroy()
-        //   }, 500)
-        // )
-        // .on('error', () => {
-        //   setTimeout(() => {
-        //     connection.destroy()
-        //   }, 500)
-        // })
+async function playYtbLink(channel, ytblink) {
+    const connection = (0, voice_1.joinVoiceChannel)({
+        channelId: channel.id,
+        guildId: channel.guild.id,
+        adapterCreator: channel.guild.voiceAdapterCreator
+    });
+    const player = (0, voice_1.createAudioPlayer)({
+        behaviors: {
+            noSubscriber: voice_1.NoSubscriberBehavior.Pause
+        }
+    });
+    player.play((0, voice_1.createAudioResource)((0, ytdl_core_1.default)(ytblink, { filter: 'audioonly' })));
+    connection.subscribe(player);
+    player.on(voice_1.AudioPlayerStatus.Idle, () => {
+        console.log('Player Idle: ', ytblink);
+        // setTimeout(() => {
+        //   // connection.destroy()
+        // }, 500)
+    });
+    player.on('error', (e) => {
+        console.log('Player Error: ', ytblink);
+        console.error(e);
+        // setTimeout(() => {
+        //   // connection.destroy()
+        // }, 500)
     });
 }
 exports.playYtbLink = playYtbLink;

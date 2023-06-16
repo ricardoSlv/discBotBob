@@ -7,15 +7,19 @@ const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const discord_js_1 = require("discord.js");
 const client = new discord_js_1.Client({
-    intents: [discord_js_1.GatewayIntentBits.Guilds, discord_js_1.GatewayIntentBits.GuildVoiceStates]
+    intents: [
+        discord_js_1.GatewayIntentBits.Guilds,
+        discord_js_1.GatewayIntentBits.GuildVoiceStates,
+        discord_js_1.GatewayIntentBits.MessageContent,
+        discord_js_1.GatewayIntentBits.GuildMessages
+    ]
 });
 const interaction_1 = __importDefault(require("./src/interaction"));
 const command_1 = __importDefault(require("./src/command"));
-client.on('ready', () => {
-    var _a;
-    console.log(`${(_a = client === null || client === void 0 ? void 0 : client.user) === null || _a === void 0 ? void 0 : _a.username} has logged in`);
+client.on(discord_js_1.Events.ClientReady, () => {
+    console.log(`${client?.user?.username} has logged in`);
 });
-client.on('message', (message) => {
+client.on(discord_js_1.Events.MessageCreate, (message) => {
     if (message.author.bot === true)
         return;
     console.log(`${message.author.tag} said: ${message.content}`);
