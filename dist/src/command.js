@@ -1,8 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const db_1 = require("./db");
-const sound_1 = require("./sound");
-async function default_1(message) {
+import { addQuote, getRandomQuote, getAllQuotes, getAllPlaylists, addPlayList, addSongToPlayList, removeSongFromPlayList, getPlaylist, renamePlaylist } from './db.js';
+import { soundMap, playPlaylist, playYtbLink, isValidSound } from './sound.js';
+export default async function (message) {
     const voiceChannel = message?.member?.voice.channel;
     const msgTokens = message.content.split(/ +/);
     const [command, ...rest] = msgTokens;
@@ -16,9 +14,9 @@ async function default_1(message) {
             switch (command) {
                 case 'bp':
                     const [soundMapKey] = args;
-                    if ((0, sound_1.isValidSound)(soundMapKey)) {
-                        const soundYtbLink = sound_1.soundMap[soundMapKey];
-                        (0, sound_1.playYtbLink)(voiceChannel, soundYtbLink);
+                    if (isValidSound(soundMapKey)) {
+                        const soundYtbLink = soundMap[soundMapKey];
+                        playYtbLink(voiceChannel, soundYtbLink);
                     }
                     else {
                         message.reply('あなたが要求した音はありません 👲🏻');
@@ -27,10 +25,10 @@ async function default_1(message) {
                 case 'bppl':
                     {
                         const [playlistName] = args;
-                        const playlist = await (0, db_1.getPlaylist)(playlistName);
+                        const playlist = await getPlaylist(playlistName);
                         if (playlist?.songs?.length) {
                             message.reply(`Playing ${playlist.name}`);
-                            (0, sound_1.playPlaylist)(voiceChannel, playlist.songs);
+                            playPlaylist(voiceChannel, playlist.songs);
                         }
                         else {
                             console.log(playlist);
@@ -41,11 +39,11 @@ async function default_1(message) {
                 case 'bppls':
                     {
                         const [playlistName] = args;
-                        const playlist = await (0, db_1.getPlaylist)(playlistName);
+                        const playlist = await getPlaylist(playlistName);
                         if (playlist) {
                             message.reply(`Playing ${playlist.name}`);
                             const shuffle = true;
-                            (0, sound_1.playPlaylist)(voiceChannel, playlist.songs, shuffle);
+                            playPlaylist(voiceChannel, playlist.songs, shuffle);
                         }
                         else {
                             message.reply(`Couldn't find the playlist, fuck you 🫵🏻`);
@@ -55,7 +53,7 @@ async function default_1(message) {
                 case 'bpyl':
                     {
                         const [ytblink] = args;
-                        await (0, sound_1.playYtbLink)(voiceChannel, ytblink);
+                        await playYtbLink(voiceChannel, ytblink);
                         message.reply(`Playing YtbLink`);
                     }
                     break;
@@ -67,12 +65,12 @@ async function default_1(message) {
             case 'baq':
                 {
                     const [text, author] = args;
-                    message.reply(await (0, db_1.addQuote)(author, text));
+                    message.reply(await addQuote(author, text));
                 }
                 break;
             case 'brq':
                 {
-                    const quote = await (0, db_1.getRandomQuote)();
+                    const quote = await getRandomQuote();
                     if (quote) {
                         message.reply(quote);
                     }
@@ -83,7 +81,7 @@ async function default_1(message) {
                 break;
             case 'blq':
                 {
-                    const quotes = await (0, db_1.getAllQuotes)();
+                    const quotes = await getAllQuotes();
                     if (quotes) {
                         message.reply(quotes);
                     }
@@ -95,24 +93,24 @@ async function default_1(message) {
             case 'bapl':
                 {
                     const [icon, playlist] = args;
-                    message.reply(await (0, db_1.addPlayList)(icon, playlist));
+                    message.reply(await addPlayList(icon, playlist));
                 }
                 break;
             case 'baspl':
                 {
                     const [playlist, songName, ytbLink] = args;
-                    message.reply(await (0, db_1.addSongToPlayList)(playlist, songName, ytbLink));
+                    message.reply(await addSongToPlayList(playlist, songName, ytbLink));
                 }
                 break;
             case 'brspl':
                 {
                     const [playlist, songName] = args;
-                    message.reply(await (0, db_1.removeSongFromPlayList)(playlist, songName));
+                    message.reply(await removeSongFromPlayList(playlist, songName));
                 }
                 break;
             case 'blpl':
                 {
-                    const playlists = await (0, db_1.getAllPlaylists)();
+                    const playlists = await getAllPlaylists();
                     if (playlists) {
                         message.reply(playlists);
                     }
@@ -124,10 +122,9 @@ async function default_1(message) {
             case 'bupln':
                 {
                     const [oldplaylistName, newPlaylistName] = args;
-                    message.reply(await (0, db_1.renamePlaylist)(oldplaylistName, newPlaylistName));
+                    message.reply(await renamePlaylist(oldplaylistName, newPlaylistName));
                 }
                 break;
         }
     }
 }
-exports.default = default_1;

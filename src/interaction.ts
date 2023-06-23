@@ -8,7 +8,7 @@ import {
 } from 'discord.js'
 import { ScheduledTask } from 'node-cron'
 
-import { soundMap, hourNotice, halfHourNotice } from './sound'
+import { soundMap, hourNotice, halfHourNotice } from './sound.js'
 
 const status = {
   clockNotice: false,

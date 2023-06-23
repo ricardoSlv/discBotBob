@@ -11,8 +11,8 @@ const client = new Client({
   ]
 })
 
-import executeInteraction from './src/interaction'
-import executeCommand from './src/command'
+import executeInteraction from './src/interaction.js'
+import executeCommand from './src/command.js'
 
 client.on(Events.ClientReady, () => {
   console.log(`${client?.user?.username} has logged in`)

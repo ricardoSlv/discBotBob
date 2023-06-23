@@ -1,9 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.renamePlaylist = exports.getPlaylist = exports.getAllPlaylists = exports.removeSongFromPlayList = exports.addSongToPlayList = exports.addPlayList = exports.addQuote = exports.getAllQuotes = exports.getRandomQuote = void 0;
-const mongodb_1 = require("mongodb");
+import { MongoClient } from 'mongodb';
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PWD}@discbotdb.ildnc.mongodb.net?retryWrites=true&w=majority`;
-const DBclient = new mongodb_1.MongoClient(uri);
+const DBclient = new MongoClient(uri);
 let dbquotes;
 let dbplaylists;
 DBclient.connect().then(() => {
@@ -11,7 +8,7 @@ DBclient.connect().then(() => {
     dbquotes = database.collection('quotes');
     dbplaylists = database.collection('playlists');
 });
-async function getRandomQuote() {
+export async function getRandomQuote() {
     let quote = '';
     try {
         const quoteObj = await dbquotes.aggregate([{ $sample: { size: 1 } }]).next();
@@ -25,8 +22,7 @@ async function getRandomQuote() {
     }
     return quote;
 }
-exports.getRandomQuote = getRandomQuote;
-async function getAllQuotes() {
+export async function getAllQuotes() {
     let quotes = '';
     try {
         const quotesdocs = await dbquotes.find({}).toArray();
@@ -38,8 +34,7 @@ async function getAllQuotes() {
     }
     return quotes;
 }
-exports.getAllQuotes = getAllQuotes;
-async function addQuote(author, text) {
+export async function addQuote(author, text) {
     let status = '';
     try {
         await dbquotes.insertOne({ author, text });
@@ -51,8 +46,7 @@ async function addQuote(author, text) {
     }
     return status;
 }
-exports.addQuote = addQuote;
-async function addPlayList(icon, playlistName) {
+export async function addPlayList(icon, playlistName) {
     let status = '';
     try {
         await dbplaylists.insertOne({ icon: icon, name: playlistName, songs: [] });
@@ -64,8 +58,7 @@ async function addPlayList(icon, playlistName) {
     }
     return status;
 }
-exports.addPlayList = addPlayList;
-async function addSongToPlayList(playlistName, songName, ytbLink) {
+export async function addSongToPlayList(playlistName, songName, ytbLink) {
     let status = '';
     try {
         const playlist = await dbplaylists.findOne({ name: playlistName });
@@ -86,8 +79,7 @@ async function addSongToPlayList(playlistName, songName, ytbLink) {
     }
     return status;
 }
-exports.addSongToPlayList = addSongToPlayList;
-async function removeSongFromPlayList(playlistName, songName) {
+export async function removeSongFromPlayList(playlistName, songName) {
     let status = '';
     try {
         const playlist = await dbplaylists.findOne({ name: playlistName });
@@ -108,8 +100,7 @@ async function removeSongFromPlayList(playlistName, songName) {
     }
     return status;
 }
-exports.removeSongFromPlayList = removeSongFromPlayList;
-async function getAllPlaylists() {
+export async function getAllPlaylists() {
     let playlists = '';
     try {
         const cursor = dbplaylists.find({});
@@ -125,8 +116,7 @@ async function getAllPlaylists() {
     }
     return playlists;
 }
-exports.getAllPlaylists = getAllPlaylists;
-async function getPlaylist(playlistName) {
+export async function getPlaylist(playlistName) {
     try {
         return await dbplaylists.findOne({ name: playlistName });
     }
@@ -135,8 +125,7 @@ async function getPlaylist(playlistName) {
         return null;
     }
 }
-exports.getPlaylist = getPlaylist;
-async function renamePlaylist(playlistName, newPlayListName) {
+export async function renamePlaylist(playlistName, newPlayListName) {
     let status;
     try {
         await dbplaylists.updateOne({ name: playlistName }, { $set: { name: newPlayListName } });
@@ -147,4 +136,3 @@ async function renamePlaylist(playlistName, newPlayListName) {
     }
     return status;
 }
-exports.renamePlaylist = renamePlaylist;

@@ -1,13 +1,11 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const sound_1 = require("./sound");
+import { soundMap, hourNotice, halfHourNotice } from './sound.js';
 const status = {
     clockNotice: false,
     clockChannels: [null, null],
     hourNotice: null,
     halfHourNotice: null
 };
-function default_1(message) {
+export default function (message) {
     const voiceChannel = message?.member?.voice.channel;
     const textChannel = message.channel;
     switch (message.content) {
@@ -28,8 +26,8 @@ function default_1(message) {
                 status.clockChannels = [textChannel, voiceChannel];
                 textChannel.send(`Starting the clock 🕒 on Text: ${textChannel} and Voice: ${voiceChannel}`);
                 status.clockNotice = true;
-                status.hourNotice = (0, sound_1.hourNotice)(textChannel, voiceChannel);
-                status.halfHourNotice = (0, sound_1.halfHourNotice)(textChannel, voiceChannel);
+                status.hourNotice = hourNotice(textChannel, voiceChannel);
+                status.halfHourNotice = halfHourNotice(textChannel, voiceChannel);
             }
             break;
         case 'bob stop the clock':
@@ -44,7 +42,7 @@ function default_1(message) {
             }
             break;
         case 'bob help':
-            const sounds = [...Object.keys(sound_1.soundMap)].join(', ');
+            const sounds = [...Object.keys(soundMap)].join(', ');
             message.reply(`Available commands: 
         👄 Speech:
         \u2001➤ bob say hi 
@@ -74,4 +72,3 @@ function default_1(message) {
         \u2001➤ bpyl + YtbLink (Play Youtube Link)`.replace(/   +/g, ''));
     }
 }
-exports.default = default_1;

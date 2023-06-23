@@ -1,17 +1,10 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.playYtbLink = exports.playPlaylist = exports.halfHourNotice = exports.hourNotice = exports.soundMap = exports.isValidSound = void 0;
-const ytdl_core_1 = __importDefault(require("ytdl-core"));
-const node_cron_1 = require("node-cron");
+import ytdl from 'ytdl-core';
+import { schedule } from 'node-cron';
 const sounds = ['gong', 'chingchong', 'bruh', 'die', 'bell', 'belldie', 'pocoto'];
-function isValidSound(value) {
+export function isValidSound(value) {
     return sounds.includes(value);
 }
-exports.isValidSound = isValidSound;
-exports.soundMap = {
+export const soundMap = {
     gong: 'https://www.youtube.com/watch?v=r7oAsDWy6n4',
     chingchong: 'https://www.youtube.com/watch?v=8yKG9VncnBI',
     bruh: 'https://www.youtube.com/watch?v=2ZIpFytCSVc',
@@ -20,22 +13,22 @@ exports.soundMap = {
     belldie: 'https://www.youtube.com/watch?v=zDBrQWq82-Q',
     pocoto: 'https://www.youtube.com/shorts/NeNN1nDv_Bc'
 };
-const voice_1 = require("@discordjs/voice");
+import { AudioPlayerStatus, createAudioPlayer, createAudioResource, joinVoiceChannel, NoSubscriberBehavior } from '@discordjs/voice';
 async function playBell(channel, rings) {
     const currRings = rings;
-    const connection = (0, voice_1.joinVoiceChannel)({
+    const connection = joinVoiceChannel({
         channelId: channel.id,
         guildId: channel.guild.id,
         adapterCreator: channel.guild.voiceAdapterCreator
     });
-    const player = (0, voice_1.createAudioPlayer)({
+    const player = createAudioPlayer({
         behaviors: {
-            noSubscriber: voice_1.NoSubscriberBehavior.Pause
+            noSubscriber: NoSubscriberBehavior.Pause
         }
     });
-    player.play((0, voice_1.createAudioResource)((0, ytdl_core_1.default)('https://www.youtube.com/watch?v=dNl4-w9ZrBs', { filter: 'audioonly' })));
+    player.play(createAudioResource(ytdl('https://www.youtube.com/watch?v=dNl4-w9ZrBs', { filter: 'audioonly' })));
     connection.subscribe(player);
-    player.on(voice_1.AudioPlayerStatus.Idle, () => {
+    player.on(AudioPlayerStatus.Idle, () => {
         if (rings === 0) {
             setTimeout(() => {
                 connection.destroy();
@@ -53,8 +46,8 @@ async function playBell(channel, rings) {
         }, 500);
     });
 }
-function hourNotice(channel, voiceChannel) {
-    return (0, node_cron_1.schedule)('0 * * * *', () => {
+export function hourNotice(channel, voiceChannel) {
+    return schedule('0 * * * *', () => {
         const currHour = new Date().toLocaleString('en-GB', {
             hour: '2-digit',
             hour12: false,
@@ -66,9 +59,8 @@ function hourNotice(channel, voiceChannel) {
         }
     });
 }
-exports.hourNotice = hourNotice;
-function halfHourNotice(channel, voiceChannel) {
-    return (0, node_cron_1.schedule)('30 * * * *', () => {
+export function halfHourNotice(channel, voiceChannel) {
+    return schedule('30 * * * *', () => {
         const currHour = new Date().toLocaleString('en-GB', {
             hour: '2-digit',
             hour12: false,
@@ -80,10 +72,9 @@ function halfHourNotice(channel, voiceChannel) {
         }
     });
 }
-exports.halfHourNotice = halfHourNotice;
-async function playPlaylist(channel, songs, shuffle, connection) {
+export async function playPlaylist(channel, songs, shuffle, connection) {
     if (!connection)
-        connection = (0, voice_1.joinVoiceChannel)({
+        connection = joinVoiceChannel({
             channelId: channel.id,
             guildId: channel.guild.id,
             adapterCreator: channel.guild.voiceAdapterCreator
@@ -110,21 +101,20 @@ async function playPlaylist(channel, songs, shuffle, connection) {
         //   })
     }
 }
-exports.playPlaylist = playPlaylist;
-async function playYtbLink(channel, ytblink) {
-    const connection = (0, voice_1.joinVoiceChannel)({
+export async function playYtbLink(channel, ytblink) {
+    const connection = joinVoiceChannel({
         channelId: channel.id,
         guildId: channel.guild.id,
         adapterCreator: channel.guild.voiceAdapterCreator
     });
-    const player = (0, voice_1.createAudioPlayer)({
+    const player = createAudioPlayer({
         behaviors: {
-            noSubscriber: voice_1.NoSubscriberBehavior.Pause
+            noSubscriber: NoSubscriberBehavior.Pause
         }
     });
-    player.play((0, voice_1.createAudioResource)((0, ytdl_core_1.default)(ytblink, { filter: 'audioonly' })));
+    player.play(createAudioResource(ytdl(ytblink, { filter: 'audioonly' })));
     connection.subscribe(player);
-    player.on(voice_1.AudioPlayerStatus.Idle, () => {
+    player.on(AudioPlayerStatus.Idle, () => {
         console.log('Player Idle: ', ytblink);
         // setTimeout(() => {
         //   // connection.destroy()
@@ -138,4 +128,3 @@ async function playYtbLink(channel, ytblink) {
         // }, 500)
     });
 }
-exports.playYtbLink = playYtbLink;
